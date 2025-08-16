@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare Backend Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .pending { background-color: #fff3cd; border-color: #ffeaa7; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="center-align">FoodShare Backend API Test</h1>
+        
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel blue lighten-5">
+                    <span class="black-text">
+                        <strong>Instructions:</strong> This page tests the FoodShare backend API endpoints. 
+                        Make sure your backend server is running on http://localhost:5000 before testing.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Check -->
+        <div class="test-section pending" id="health-test">
+            <h4>Health Check</h4>
+            <p>Testing if the backend server is running...</p>
+            <button class="btn" onclick="testHealth()">Test Health</button>
+            <div class="result" id="health-result"></div>
+        </div>
+
+        <!-- Contact Form Test -->
+        <div class="test-section pending" id="contact-test">
+            <h4>Contact Form API Test</h4>
+            <p>Testing the contact form submission endpoint...</p>
+            <button class="btn" onclick="testContact()">Test Contact API</button>
+            <div class="result" id="contact-result"></div>
+        </div>
+
+        <!-- Donations API Test -->
+        <div class="test-section pending" id="donations-test">
+            <h4>Donations API Test</h4>
+            <p>Testing the donations listing endpoint...</p>
+            <button class="btn" onclick="testDonations()">Test Donations API</button>
+            <div class="result" id="donations-result"></div>
+        </div>
+
+        <!-- Auth API Test -->
+        <div class="test-section pending" id="auth-test">
+            <h4>Authentication API Test</h4>
+            <p>Testing user registration endpoint...</p>
+            <button class="btn" onclick="testAuth()">Test Auth API</button>
+            <div class="result" id="auth-result"></div>
+        </div>
+
+        <!-- Run All Tests -->
+        <div class="row">
+            <div class="col s12 center-align">
+                <button class="btn-large waves-effect waves-light" onclick="runAllTests()">
+                    Run All Tests
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel">
+                    <h5>Test Results Summary</h5>
+                    <div id="summary"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+        let testResults = {};
+
+        async function testHealth() {
+            const section = document.getElementById('health-test');
+            const result = document.getElementById('health-result');
+            
+            try {
+                const response = await fetch('http://localhost:5000/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    section.className = 'test-section success';
+                    result.innerHTML = `<strong>✅ SUCCESS:</strong> ${JSON.stringify(data, null, 2)}`;
+                    testResults.health = 'success';
+                } else {
+                    section.className = 'test-section error';
+                    result.innerHTML = `<strong>❌ ERROR:</strong> HTTP ${response.status}`;
+                    testResults.health = 'error';
+                }
+            } catch (error) {
+                section.className = 'test-section error';
+                result.innerHTML = `<strong>❌ ERROR:</strong> ${error.message}`;
+                testResults.health = 'error';
+            }
+        }
+
+        async function testContact() {
+            const section = document.getElementById('contact-test');
+            const result = document.getElementById('contact-result');
+            
+            try {
+                const testData = {
+                    firstName: 'Test',
+                    lastName: 'User',
+                    email: 'test@example.com',
+                    phone: '1234567890',
+                    subject: 'API Test',
+                    message: 'This is a test message from the API test page',
+                    category: 'test'
+                };
+
+                const response = await fetch(`${API_BASE_URL}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    section.className = 'test-section success';
+                    result.innerHTML = `<strong>✅ SUCCESS:</strong> ${JSON.stringify(data, null, 2)}`;
+                    testResults.contact = 'success';
+                } else {
+                    const error = await response.json();
+                    section.className = 'test-section error';
+                    result.innerHTML = `<strong>❌ ERROR:</strong> ${JSON.stringify(error, null, 2)}`;
+                    testResults.contact = 'error';
+                }
+            } catch (error) {
+                section.className = 'test-section error';
+                result.innerHTML = `<strong>❌ ERROR:</strong> ${error.message}`;
+                testResults.contact = 'error';
+            }
+        }
+
+        async function testDonations() {
+            const section = document.getElementById('donations-test');
+            const result = document.getElementById('donations-result');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/donations`);
+                if (response.ok) {
+                    const data = await response.json();
+                    section.className = 'test-section success';
+                    result.innerHTML = `<strong>✅ SUCCESS:</strong> Found ${data.data.donations.length} donations. ${JSON.stringify(data, null, 2)}`;
+                    testResults.donations = 'success';
+                } else {
+                    const error = await response.json();
+                    section.className = 'test-section error';
+                    result.innerHTML = `<strong>❌ ERROR:</strong> ${JSON.stringify(error, null, 2)}`;
+                    testResults.donations = 'error';
+                }
+            } catch (error) {
+                section.className = 'test-section error';
+                result.innerHTML = `<strong>❌ ERROR:</strong> ${error.message}`;
+                testResults.donations = 'error';
+            }
+        }
+
+        async function testAuth() {
+            const section = document.getElementById('auth-test');
+            const result = document.getElementById('auth-result');
+            
+            try {
+                const testData = {
+                    firstName: 'Test',
+                    lastName: 'User',
+                    email: `test${Date.now()}@example.com`,
+                    password: 'testpassword123',
+                    phone: '1234567890',
+                    role: 'donor'
+                };
+
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    section.className = 'test-section success';
+                    result.innerHTML = `<strong>✅ SUCCESS:</strong> User registered successfully. ${JSON.stringify(data, null, 2)}`;
+                    testResults.auth = 'success';
+                } else {
+                    const error = await response.json();
+                    section.className = 'test-section error';
+                    result.innerHTML = `<strong>❌ ERROR:</strong> ${JSON.stringify(error, null, 2)}`;
+                    testResults.auth = 'error';
+                }
+            } catch (error) {
+                section.className = 'test-section error';
+                result.innerHTML = `<strong>❌ ERROR:</strong> ${error.message}`;
+                testResults.auth = 'error';
+            }
+        }
+
+        async function runAllTests() {
+            // Reset all sections
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section pending';
+            });
+
+            // Run tests sequentially
+            await testHealth();
+            await testContact();
+            await testDonations();
+            await testAuth();
+
+            // Show summary
+            showSummary();
+        }
+
+        function showSummary() {
+            const summary = document.getElementById('summary');
+            const total = Object.keys(testResults).length;
+            const passed = Object.values(testResults).filter(r => r === 'success').length;
+            const failed = total - passed;
+
+            summary.innerHTML = `
+                <div class="row">
+                    <div class="col s4">
+                        <div class="card-panel green lighten-4 center-align">
+                            <h6>Total Tests</h6>
+                            <h4>${total}</h4>
+                        </div>
+                    </div>
+                    <div class="col s4">
+                        <div class="card-panel green lighten-4 center-align">
+                            <h6>Passed</h6>
+                            <h4 class="green-text">${passed}</h4>
+                        </div>
+                    </div>
+                    <div class="col s4">
+                        <div class="card-panel ${failed > 0 ? 'red' : 'green'} lighten-4 center-align">
+                            <h6>Failed</h6>
+                            <h4 class="${failed > 0 ? 'red' : 'green'}-text">${failed}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="center-align">
+                    <h5>${failed === 0 ? '🎉 All tests passed! Your backend is working correctly.' : '⚠️ Some tests failed. Check the results above.'}</h5>
+                </div>
+            `;
+        }
+
+        // Auto-run health check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            M.AutoInit();
+            testHealth();
+        });
+    </script>
+</body>
+</html>
