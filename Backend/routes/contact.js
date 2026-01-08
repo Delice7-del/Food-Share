@@ -16,8 +16,8 @@ router.post('/', [
     .normalizeEmail()
     .withMessage('Please provide a valid email address'),
   body('phone')
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
-    .withMessage('Please provide a valid phone number'),
+    .matches(/^[\+]?[\d\s\-\(\)\.]{5,20}$/)
+    .withMessage('Please provide a valid phone number (min 5 digits)'),
   body('subject')
     .trim(),
   body('message')
@@ -31,10 +31,12 @@ router.post('/', [
     .isIn(['website', 'mobile-app', 'email', 'phone', 'social-media'])
     .withMessage('Invalid source')
 ], async (req, res) => {
+  console.log('Received contact submission:', req.body);
   try {
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('Validation errors:', errors.array());
       return res.status(400).json({
         error: 'Validation failed',
         details: errors.array()
@@ -53,7 +55,7 @@ router.post('/', [
     res.status(201).json({
       success: true,
       message: 'Message submitted successfully',
-      data: { 
+      data: {
         contact: {
           id: contact._id,
           subject: contact.subject,
@@ -173,8 +175,8 @@ router.get('/:id', protect, async (req, res) => {
     }
 
     // Check if user can access this contact
-    if (req.user.role !== 'admin' && 
-        (!contact.assignedTo || contact.assignedTo._id.toString() !== req.user._id.toString())) {
+    if (req.user.role !== 'admin' &&
+      (!contact.assignedTo || contact.assignedTo._id.toString() !== req.user._id.toString())) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You can only view contacts assigned to you'
@@ -187,7 +189,7 @@ router.get('/:id', protect, async (req, res) => {
     });
   } catch (error) {
     console.error('Get contact error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid contact ID',
@@ -223,7 +225,7 @@ router.post('/:id/respond', protect, [
 
     // Find contact
     const contact = await Contact.findById(req.params.id);
-    
+
     if (!contact) {
       return res.status(404).json({
         error: 'Contact not found',
@@ -232,8 +234,8 @@ router.post('/:id/respond', protect, [
     }
 
     // Check if user can respond to this contact
-    if (req.user.role !== 'admin' && 
-        (!contact.assignedTo || contact.assignedTo.toString() !== req.user._id.toString())) {
+    if (req.user.role !== 'admin' &&
+      (!contact.assignedTo || contact.assignedTo.toString() !== req.user._id.toString())) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You can only respond to contacts assigned to you'
@@ -252,7 +254,7 @@ router.post('/:id/respond', protect, [
     });
   } catch (error) {
     console.error('Respond to contact error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid contact ID',
@@ -287,7 +289,7 @@ router.post('/:id/assign', protect, authorize('admin'), [
 
     // Find contact
     const contact = await Contact.findById(req.params.id);
-    
+
     if (!contact) {
       return res.status(404).json({
         error: 'Contact not found',
@@ -308,7 +310,7 @@ router.post('/:id/assign', protect, authorize('admin'), [
     });
   } catch (error) {
     console.error('Assign contact error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid contact ID',
@@ -344,7 +346,7 @@ router.post('/:id/notes', protect, [
 
     // Find contact
     const contact = await Contact.findById(req.params.id);
-    
+
     if (!contact) {
       return res.status(404).json({
         error: 'Contact not found',
@@ -353,8 +355,8 @@ router.post('/:id/notes', protect, [
     }
 
     // Check if user can add notes to this contact
-    if (req.user.role !== 'admin' && 
-        (!contact.assignedTo || contact.assignedTo.toString() !== req.user._id.toString())) {
+    if (req.user.role !== 'admin' &&
+      (!contact.assignedTo || contact.assignedTo.toString() !== req.user._id.toString())) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You can only add notes to contacts assigned to you'
@@ -367,7 +369,7 @@ router.post('/:id/notes', protect, [
     res.json({
       success: true,
       message: 'Note added successfully',
-      data: { 
+      data: {
         contact: {
           id: contact._id,
           notes: contact.notes
@@ -376,7 +378,7 @@ router.post('/:id/notes', protect, [
     });
   } catch (error) {
     console.error('Add note error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid contact ID',
@@ -418,7 +420,7 @@ router.post('/:id/follow-up', protect, [
 
     // Find contact
     const contact = await Contact.findById(req.params.id);
-    
+
     if (!contact) {
       return res.status(404).json({
         error: 'Contact not found',
@@ -427,8 +429,8 @@ router.post('/:id/follow-up', protect, [
     }
 
     // Check if user can schedule follow-up for this contact
-    if (req.user.role !== 'admin' && 
-        (!contact.assignedTo || contact.assignedTo.toString() !== req.user._id.toString())) {
+    if (req.user.role !== 'admin' &&
+      (!contact.assignedTo || contact.assignedTo.toString() !== req.user._id.toString())) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You can only schedule follow-ups for contacts assigned to you'
@@ -441,7 +443,7 @@ router.post('/:id/follow-up', protect, [
     res.json({
       success: true,
       message: 'Follow-up scheduled successfully',
-      data: { 
+      data: {
         contact: {
           id: contact._id,
           followUp: contact.followUp
@@ -450,7 +452,7 @@ router.post('/:id/follow-up', protect, [
     });
   } catch (error) {
     console.error('Schedule follow-up error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid contact ID',

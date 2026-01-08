@@ -5,11 +5,33 @@ const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
+// @desc    Get current user profile
+// @route   GET /api/users/profile
+// @access  Private
+router.get('/profile', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
 
+// @desc    Update current user profile
+// @route   PUT /api/users/profile
+// @access  Private
+router.put('/profile', protect, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true }).select('-password');
+    res.json({ success: true, message: 'Profile updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
 router.get('/', protect, authorize('admin'), [
   query('role')
     .optional()
-    .isIn(['donor', 'volunteer', 'charity', 'admin'])
+    .isIn(['donor', 'receiver', 'admin'])
     .withMessage('Invalid role'),
   query('status')
     .optional()
@@ -118,7 +140,7 @@ router.get('/:id', protect, async (req, res) => {
     });
   } catch (error) {
     console.error('Get user error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid user ID',
@@ -156,7 +178,7 @@ router.put('/:id', protect, [
     .withMessage('Organization name cannot exceed 100 characters'),
   body('role')
     .optional()
-    .isIn(['donor', 'volunteer', 'charity', 'admin'])
+    .isIn(['donor', 'receiver', 'admin'])
     .withMessage('Invalid role'),
   body('isActive')
     .optional()
@@ -213,7 +235,7 @@ router.put('/:id', protect, [
     });
   } catch (error) {
     console.error('Update user error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid user ID',
@@ -258,7 +280,7 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
     });
   } catch (error) {
     console.error('Delete user error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         error: 'Invalid user ID',
@@ -287,7 +309,7 @@ router.get('/nearby', [
     .withMessage('Radius must be between 0.1 and 100 miles'),
   query('role')
     .optional()
-    .isIn(['donor', 'volunteer', 'charity'])
+    .isIn(['donor', 'receiver'])
     .withMessage('Invalid role'),
   query('limit')
     .optional()
@@ -334,8 +356,8 @@ router.get('/nearby', [
         }
       }
     })
-    .select('firstName lastName role organization location address')
-    .limit(parseInt(limit));
+      .select('firstName lastName role organization location address')
+      .limit(parseInt(limit));
 
     res.json({
       success: true,
@@ -442,8 +464,8 @@ router.get('/search', protect, authorize('admin'), [
         { organization: { $regex: q, $options: 'i' } }
       ]
     })
-    .select('-password')
-    .limit(20);
+      .select('-password')
+      .limit(20);
 
     res.json({
       success: true,

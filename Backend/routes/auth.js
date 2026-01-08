@@ -33,7 +33,7 @@ router.post('/register', authLimiter, [
     .withMessage('Please provide a valid phone number'),
   body('role')
     .optional()
-    .isIn(['donor', 'volunteer', 'charity'])
+    .isIn(['donor', 'receiver'])
     .withMessage('Invalid role specified'),
   body('organization')
     .optional()
@@ -75,31 +75,29 @@ router.post('/register', authLimiter, [
       location
     });
 
- 
+
     const token = generateToken(user._id);
 
-  
+
     await user.updateLastLogin();
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
-      data: {
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-          organization: user.organization,
-          isVerified: user.isVerified
-        },
-        token
-      }
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        organization: user.organization,
+        isVerified: user.isVerified
+      },
+      token
     });
   } catch (error) {
     console.error('Registration error:', error);
-    
+
     if (error.code === 11000) {
       return res.status(400).json({
         error: 'Duplicate field',
@@ -125,7 +123,7 @@ router.post('/login', authLimiter, [
     .withMessage('Password is required')
 ], async (req, res) => {
   try {
- 
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -135,56 +133,61 @@ router.post('/login', authLimiter, [
     }
 
     const { email, password } = req.body;
+    console.log('Login attempt for:', email);
 
-    
+    // Check for user
     const user = await User.findOne({ email }).select('+password');
-    
+    console.log('User found:', user ? 'Yes' : 'No');
+
     if (!user) {
+      console.log('Login failed: User not found');
       return res.status(401).json({
         error: 'Invalid credentials',
         message: 'Email or password is incorrect'
       });
     }
 
-    
+    // Check if user is active
     if (!user.isActive) {
+      console.log('Login failed: User inactive');
       return res.status(401).json({
         error: 'Account deactivated',
         message: 'Your account has been deactivated. Please contact support.'
       });
     }
 
-   
+    // Check password
     const isMatch = await user.comparePassword(password);
+    console.log('Password match:', isMatch);
+
     if (!isMatch) {
+      console.log('Login failed: Password mismatch');
       return res.status(401).json({
         error: 'Invalid credentials',
         message: 'Email or password is incorrect'
       });
     }
 
-    
+    // Create token
     const token = generateToken(user._id);
 
-   
+    // Update last login
     await user.updateLastLogin();
 
     res.json({
       success: true,
       message: 'Login successful',
-      data: {
-        user: {
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-          organization: user.organization,
-          isVerified: user.isVerified,
-          lastLogin: user.lastLogin
-        },
-        token
-      }
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        organization: user.organization,
+        isVerified: user.isVerified,
+        lastLogin: user.lastLogin
+      },
+      token
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -201,10 +204,10 @@ router.post('/login', authLimiter, [
 router.get('/me', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
-    
+
     res.json({
       success: true,
-      data: { user }
+      user
     });
   } catch (error) {
     console.error('Get profile error:', error);
@@ -249,7 +252,7 @@ router.put('/me', protect, [
 
     const { firstName, lastName, phone, organization, address, location, preferences } = req.body;
 
-   
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -288,7 +291,7 @@ router.put('/change-password', protect, [
     .withMessage('New password must be at least 6 characters long')
 ], async (req, res) => {
   try {
-  
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -299,7 +302,7 @@ router.put('/change-password', protect, [
 
     const { currentPassword, newPassword } = req.body;
 
-  
+
     const user = await User.findById(req.user._id).select('+password');
 
 
@@ -311,7 +314,7 @@ router.put('/change-password', protect, [
       });
     }
 
-   
+
     user.password = newPassword;
     await user.save();
 
@@ -330,8 +333,8 @@ router.put('/change-password', protect, [
 
 
 router.post('/logout', protect, (req, res) => {
-  
-  
+
+
   res.json({
     success: true,
     message: 'Logged out successfully'
@@ -341,7 +344,7 @@ router.post('/logout', protect, (req, res) => {
 
 router.post('/refresh', protect, async (req, res) => {
   try {
-  
+
     const token = generateToken(req.user._id);
 
     res.json({
