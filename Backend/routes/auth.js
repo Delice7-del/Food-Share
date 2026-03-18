@@ -29,7 +29,7 @@ router.post('/register', authLimiter, [
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long'),
   body('phone')
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
+    .matches(/^[\+]?[\d\s\-\(\)\.]{5,20}$/)
     .withMessage('Please provide a valid phone number'),
   body('role')
     .optional()
@@ -107,7 +107,9 @@ router.post('/register', authLimiter, [
 
     res.status(500).json({
       error: 'Registration failed',
-      message: 'An error occurred during registration'
+      message: 'An error occurred during registration',
+      debug_error: error.message,
+      debug_stack: error.stack
     });
   }
 });
@@ -232,7 +234,7 @@ router.put('/me', protect, [
     .withMessage('Last name must be between 2 and 50 characters'),
   body('phone')
     .optional()
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
+    .matches(/^[\+]?[\d\s\-\(\)\.]{5,20}$/)
     .withMessage('Please provide a valid phone number'),
   body('organization')
     .optional()

@@ -23,7 +23,7 @@ const contactSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: [true, 'Phone number is required'],
-    match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number']
+    match: [/^[\+]?[\d\s\-\(\)\.]{5,20}$/, 'Please enter a valid phone number']
   },
   subject: {
     type: String,
@@ -124,24 +124,24 @@ contactSchema.index({ email: 1 });
 contactSchema.index({ assignedTo: 1 });
 
 // Virtual for full name
-contactSchema.virtual('fullName').get(function() {
+contactSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
 // Virtual for response time
-contactSchema.virtual('responseTime').get(function() {
+contactSchema.virtual('responseTime').get(function () {
   if (!this.response.respondedAt) return null;
   return this.response.respondedAt - this.createdAt;
 });
 
 // Virtual for age in hours
-contactSchema.virtual('ageInHours').get(function() {
+contactSchema.virtual('ageInHours').get(function () {
   const now = new Date();
   return Math.floor((now - this.createdAt) / (1000 * 60 * 60));
 });
 
 // Pre-save middleware to set priority based on category
-contactSchema.pre('save', function(next) {
+contactSchema.pre('save', function (next) {
   if (this.category === 'urgent' || this.message.toLowerCase().includes('urgent')) {
     this.priority = 'urgent';
   }
@@ -149,7 +149,7 @@ contactSchema.pre('save', function(next) {
 });
 
 // Method to add note
-contactSchema.methods.addNote = function(content, userId) {
+contactSchema.methods.addNote = function (content, userId) {
   this.notes.push({
     content,
     addedBy: userId
@@ -158,7 +158,7 @@ contactSchema.methods.addNote = function(content, userId) {
 };
 
 // Method to respond to contact
-contactSchema.methods.respond = function(message, userId) {
+contactSchema.methods.respond = function (message, userId) {
   this.response = {
     message,
     respondedBy: userId,
@@ -170,14 +170,14 @@ contactSchema.methods.respond = function(message, userId) {
 };
 
 // Method to assign to user
-contactSchema.methods.assignTo = function(userId) {
+contactSchema.methods.assignTo = function (userId) {
   this.assignedTo = userId;
   this.status = 'in-progress';
   return this.save();
 };
 
 // Method to schedule follow-up
-contactSchema.methods.scheduleFollowUp = function(date, notes = '') {
+contactSchema.methods.scheduleFollowUp = function (date, notes = '') {
   this.followUp = {
     scheduled: true,
     date,
@@ -187,14 +187,14 @@ contactSchema.methods.scheduleFollowUp = function(date, notes = '') {
 };
 
 // Static method to find urgent contacts
-contactSchema.statics.findUrgent = function() {
+contactSchema.statics.findUrgent = function () {
   return this.find({
     $or: [
       { priority: 'urgent' },
       { priority: 'high', status: 'new' },
-      { 
-        priority: 'medium', 
-        status: 'new', 
+      {
+        priority: 'medium',
+        status: 'new',
         createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) } // Older than 24 hours
       }
     ]
@@ -202,7 +202,7 @@ contactSchema.statics.findUrgent = function() {
 };
 
 // Static method to find contacts by category
-contactSchema.statics.findByCategory = function(category, limit = 50) {
+contactSchema.statics.findByCategory = function (category, limit = 50) {
   return this.find({ category })
     .sort({ createdAt: -1 })
     .limit(limit)
@@ -210,7 +210,7 @@ contactSchema.statics.findByCategory = function(category, limit = 50) {
 };
 
 // Static method to get contact statistics
-contactSchema.statics.getStatistics = function() {
+contactSchema.statics.getStatistics = function () {
   return this.aggregate([
     {
       $group: {

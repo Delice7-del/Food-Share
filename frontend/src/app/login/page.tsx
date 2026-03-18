@@ -22,6 +22,8 @@ const LoginPage = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        console.log("Login form data:", formData);
+
 
         try {
             const res = await api.post('/auth/login', formData);

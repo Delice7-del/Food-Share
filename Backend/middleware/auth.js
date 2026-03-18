@@ -1,6 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Helper to get JWT secret with a development fallback and warning
+const getJwtSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    console.warn('Warning: JWT_SECRET is not set. Using a development fallback secret. Set JWT_SECRET in production.');
+    return 'dev-change-me-please';
+  }
+  return process.env.JWT_SECRET;
+};
+
 
 const protect = async (req, res, next) => {
   let token;
@@ -20,7 +29,7 @@ const protect = async (req, res, next) => {
 
   try {
   
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
 
  
     const user = await User.findById(decoded.id).select('-password');
@@ -96,7 +105,7 @@ const optionalAuth = async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, getJwtSecret());
       const user = await User.findById(decoded.id).select('-password');
       
       if (user && user.isActive) {
@@ -125,7 +134,7 @@ const authRateLimit = {
 
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id }, getJwtSecret(), {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
@@ -133,7 +142,7 @@ const generateToken = (id) => {
 
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    return jwt.verify(token, getJwtSecret());
   } catch (error) {
     return null;
   }

@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: [true, 'Phone number is required'],
-    match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number']
+    match: [/^[\+]?[\d\s\-\(\)\.]{5,20}$/, 'Please enter a valid phone number']
   },
   role: {
     type: String,
@@ -103,20 +103,20 @@ userSchema.index({ location: '2dsphere' });
 userSchema.index({ email: 1 });
 
 // Virtual for full name
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
 // Virtual for address string
-userSchema.virtual('addressString').get(function() {
+userSchema.virtual('addressString').get(function () {
   if (!this.address.street) return '';
   return `${this.address.street}, ${this.address.city}, ${this.address.state} ${this.address.zipCode}`;
 });
 
 // Pre-save middleware to hash password
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  
+
   try {
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
@@ -127,18 +127,18 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Method to update last login
-userSchema.methods.updateLastLogin = function() {
+userSchema.methods.updateLastLogin = function () {
   this.lastLogin = new Date();
   return this.save();
 };
 
 // Static method to find users by location
-userSchema.statics.findNearby = function(coordinates, maxDistance = 25) {
+userSchema.statics.findNearby = function (coordinates, maxDistance = 25) {
   return this.find({
     location: {
       $near: {
