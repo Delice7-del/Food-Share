@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Saira_Condensed, Antic_Slab } from "next/font/google";
 import "./globals.css";
 
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
-  variable: "--font-poppins",
+const sairaCondensed = Saira_Condensed({
+  weight: ['400', '500', '600', '700', '800'],
+  variable: "--font-saira",
+  subsets: ["latin"],
+});
+
+const anticSlab = Antic_Slab({
+  weight: ['400'],
+  variable: "--font-antic",
   subsets: ["latin"],
 });
 
@@ -23,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} font-sans antialiased`}
+        className={`${sairaCondensed.variable} ${anticSlab.variable} font-body antialiased`}
       >
         <AuthProvider>
           {children}

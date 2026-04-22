@@ -16,6 +16,10 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const foodRoutes = require('./routes/food');
 const contactRoutes = require('./routes/contact');
+const donorRoutes = require('./routes/donor');
+const receiverRoutes = require('./routes/receiver');
+const notificationRoutes = require('./routes/notifications');
+const messageRoutes = require('./routes/messages');
 
 app.use(helmet());
 app.use(compression());
@@ -69,6 +73,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/donor', donorRoutes);
+app.use('/api/receiver', receiverRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/messages', messageRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

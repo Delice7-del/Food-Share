@@ -48,58 +48,65 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg border border-gray-100">
+            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Sign in to your account
+                    <h2 className="mt-6 text-center text-4xl font-heading font-extrabold text-gray-900 tracking-tight">
+                        Welcome Back
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                        Or{' '}
-                        <Link href="/register" className="font-medium text-orange-600 hover:text-orange-500">
-                            create a new account
-                        </Link>
+                    <p className="mt-2 text-center text-sm text-gray-500">
+                        Sign in to manage your donations or requests.
                     </p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm text-center">
+                        <div className="bg-red-50 text-red-700 p-4 rounded-xl text-sm text-center font-medium">
                             {error}
                         </div>
                     )}
-                    <div className="rounded-md shadow-sm -space-y-px">
-                        <div>
+                    
+                    <div className="space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-xs font-heading font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
                             <input
                                 name="email"
                                 type="email"
                                 required
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                                placeholder="Email address"
+                                className="input-field"
+                                placeholder="john@example.com"
                             />
                         </div>
-                        <div>
+                        <div className="space-y-1">
+                            <label className="text-xs font-heading font-bold text-gray-400 uppercase tracking-wider ml-1">Password</label>
                             <input
                                 name="password"
                                 type="password"
                                 required
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                                placeholder="Password"
+                                className="input-field"
+                                placeholder="••••••••"
                             />
                         </div>
                     </div>
 
-                    <div>
+                    <div className="pt-2">
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50"
+                            className="btn-primary w-full py-4 text-base shadow-lg shadow-primary-light"
                         >
-                            {loading ? 'Signing in...' : 'Sign in'}
+                            {loading ? 'Signing in...' : 'Sign In'}
                         </button>
                     </div>
+
+                    <p className="text-center text-sm text-gray-500 mt-6">
+                        Don't have an account?{' '}
+                        <Link href="/register" className="font-heading font-bold text-primary hover:text-primary-hover">
+                            Create one now
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>

@@ -36,6 +36,7 @@ export default function FoodDetailsPage() {
     const { user } = useAuth();
     const [food, setFood] = useState<FoodDetail | null>(null);
     const [loading, setLoading] = useState(true);
+    const [requestMessage, setRequestMessage] = useState('');
     const [claiming, setClaiming] = useState(false);
 
     useEffect(() => {
@@ -53,16 +54,22 @@ export default function FoodDetailsPage() {
         if (id) fetchFood();
     }, [id]);
 
-    const handleClaim = async () => {
-        if (!confirm('Are you sure you want to claim this food?')) return;
-
+    const handleRequest = async () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        
         setClaiming(true);
         try {
-            await api.post(`/food/claim/${id}`);
-            alert('Food claimed successfully!');
-            router.push('/profile');
+            await api.post('/receiver/requests', { 
+                donationId: id,
+                message: requestMessage 
+            });
+            alert('Request sent successfully! The donor will review it.');
+            router.push('/receiver/dashboard');
         } catch (err: any) {
-            alert(err.response?.data?.error || 'Failed to claim food');
+            alert(err.response?.data?.error || 'Failed to send request');
         } finally {
             setClaiming(false);
         }
@@ -73,7 +80,7 @@ export default function FoodDetailsPage() {
             <div className="min-h-screen flex flex-col bg-gray-50">
                 <Navbar />
                 <div className="flex-grow flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
                 <Footer />
             </div>
@@ -85,8 +92,8 @@ export default function FoodDetailsPage() {
             <div className="min-h-screen flex flex-col bg-gray-50">
                 <Navbar />
                 <div className="flex-grow flex flex-col justify-center items-center py-20">
-                    <h2 className="text-2xl font-bold text-gray-900">Food listing not found</h2>
-                    <Link href="/" className="mt-4 text-orange-600 hover:underline">Return to home</Link>
+                    <h2 className="text-2xl font-heading font-bold text-gray-900">Food listing not found</h2>
+                    <Link href="/" className="mt-4 text-primary hover:underline font-heading font-medium">Return to home</Link>
                 </div>
                 <Footer />
             </div>
@@ -105,95 +112,112 @@ export default function FoodDetailsPage() {
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
             <Navbar />
-            <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+            <main className="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
                 <button
                     onClick={() => router.back()}
-                    className="mb-6 flex items-center text-gray-600 hover:text-orange-600 transition-colors"
+                    className="mb-8 flex items-center text-gray-500 hover:text-primary transition-colors font-heading text-sm font-medium"
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back to listings
                 </button>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="grid grid-cols-1 md:grid-cols-2">
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="grid grid-cols-1 lg:grid-cols-2">
                         {/* Left: Image */}
-                        <div className="h-64 md:h-full bg-orange-50 border-r border-gray-100 flex items-center justify-center overflow-hidden">
+                        <div className="h-[300px] lg:h-auto bg-primary-light flex items-center justify-center overflow-hidden">
                             {food.imageUrl ? (
                                 <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover" />
                             ) : (
-                                <Utensils className="h-20 w-20 text-orange-200" />
+                                <Utensils className="h-24 w-24 text-primary-light" />
                             )}
                         </div>
 
                         {/* Right: Info */}
-                        <div className="p-8">
-                            <div className="flex justify-between items-start mb-4">
-                                <h1 className="text-3xl font-bold text-gray-900">{food.name}</h1>
-                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${food.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        <div className="p-10 lg:p-12">
+                            <div className="flex justify-between items-start mb-6">
+                                <h1 className="text-4xl font-heading font-extrabold text-gray-900 leading-tight">{food.name}</h1>
+                                <span className={`px-4 py-1 rounded-full text-xs font-heading font-bold uppercase tracking-wider ${food.status === 'available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                                     {food.status === 'available' ? 'Available' : 'Claimed'}
                                 </span>
                             </div>
 
-                            <p className="text-gray-600 mb-8 leading-relaxed">
+                            <p className="text-gray-600 mb-10 text-lg leading-relaxed">
                                 {food.description}
                             </p>
 
-                            <div className="space-y-4 mb-8">
-                                <div className="flex items-center text-gray-700">
-                                    <Tag className="h-5 w-5 mr-3 text-orange-500" />
-                                    <span className="font-medium">Quantity:</span>
-                                    <span className="ml-2">{food.quantity}</span>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                                <div className="flex items-center text-gray-700 bg-gray-50 p-4 rounded-2xl">
+                                    <Tag className="h-6 w-6 mr-4 text-primary-light0" />
+                                    <div>
+                                        <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest">Quantity</p>
+                                        <p className="font-bold">{food.quantity}</p>
+                                    </div>
                                 </div>
-                                <div className="flex items-center text-gray-700">
-                                    <MapPin className="h-5 w-5 mr-3 text-orange-500" />
-                                    <span className="font-medium">Pickup:</span>
-                                    <span className="ml-2">{food.pickupLocation}</span>
-                                </div>
-                                <div className="flex items-center text-gray-700">
-                                    <Clock className="h-5 w-5 mr-3 text-orange-500" />
-                                    <span className="font-medium">Expires in:</span>
-                                    <span className={`ml-2 font-bold ${isExpired ? 'text-red-600' : 'text-orange-600'}`}>
-                                        {timeLeft()}
-                                    </span>
+                                <div className="flex items-center text-gray-700 bg-gray-50 p-4 rounded-2xl">
+                                    <Clock className="h-6 w-6 mr-4 text-primary-light0" />
+                                    <div>
+                                        <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest">Expires In</p>
+                                        <p className={`font-bold ${isExpired ? 'text-red-600' : 'text-primary'}`}>
+                                            {timeLeft()}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="border-t border-gray-100 pt-8">
-                                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Posted By</h3>
-                                <div className="flex items-center mb-4">
-                                    <div className="bg-orange-100 p-2 rounded-full mr-3 text-orange-600">
-                                        <User className="h-5 w-5" />
+                            <div className="flex items-start text-gray-700 bg-primary-light/50 p-5 rounded-2xl mb-10">
+                                <MapPin className="h-6 w-6 mr-4 text-primary-light0 mt-1" />
+                                <div>
+                                    <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest">Pickup Location</p>
+                                    <p className="font-bold">{food.pickupLocation}</p>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-gray-100 pt-10">
+                                <div className="flex items-center mb-8">
+                                    <div className="bg-primary-light p-3 rounded-2xl mr-4 text-primary">
+                                        <User className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <div className="font-bold text-gray-900">
+                                        <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest">Donor</p>
+                                        <p className="font-bold text-xl text-gray-900">
                                             {food.donor.organization || `${food.donor.firstName} ${food.donor.lastName}`}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2 mb-8">
-                                    <div className="flex items-center text-gray-600">
-                                        <Phone className="h-4 w-4 mr-2" />
-                                        <span>{food.donor.phone || 'No phone provided'}</span>
-                                    </div>
-                                    <div className="flex items-center text-gray-600">
-                                        <Mail className="h-4 w-4 mr-2" />
-                                        <span>{food.donor.email}</span>
-                                    </div>
-                                    <div className="mt-2 text-sm bg-orange-50 text-orange-800 p-3 rounded-lg flex items-start">
-                                        <span className="font-bold mr-2">Contact via:</span>
-                                        {food.contactMethod}
+                                        </p>
                                     </div>
                                 </div>
 
                                 {user?.role === 'receiver' && food.status === 'available' && !isExpired && (
-                                    <button
-                                        onClick={handleClaim}
-                                        disabled={claiming}
-                                        className="w-full bg-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-orange-700 transition-all shadow-lg shadow-orange-200 disabled:opacity-50 active:scale-[0.98]"
-                                    >
-                                        {claiming ? 'Processing...' : 'Claim This Food'}
-                                    </button>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-heading font-bold text-gray-500 uppercase tracking-wider ml-1">Add a message (Optional)</label>
+                                            <textarea 
+                                                value={requestMessage}
+                                                onChange={(e) => setRequestMessage(e.target.value)}
+                                                placeholder="e.g. I can pick this up in 30 minutes. Thank you!"
+                                                className="input-field min-h-[100px] py-3"
+                                            ></textarea>
+                                        </div>
+                                        <button
+                                            onClick={handleRequest}
+                                            disabled={claiming}
+                                            className="btn-primary w-full py-5 text-xl shadow-xl shadow-primary-light"
+                                        >
+                                            {claiming ? 'Sending Request...' : 'Request This Food'}
+                                        </button>
+                                        <p className="text-center text-xs text-gray-400 italic">
+                                            The donor will review your request and get back to you.
+                                        </p>
+                                    </div>
+                                )}
+
+                                {(!user || user.role !== 'receiver') && food.status === 'available' && !isExpired && (
+                                    <div className="bg-blue-50 p-6 rounded-2xl text-blue-800 flex items-start">
+                                        <div className="mr-4 mt-1"><Utensils size={20} /></div>
+                                        <div>
+                                            <p className="font-bold font-heading">Interested in this food?</p>
+                                            <p className="text-sm mt-1">Please log in as a <strong>Receiver</strong> to send a request to the donor.</p>
+                                            <Link href="/login" className="inline-block mt-3 font-bold underline">Log in now</Link>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>

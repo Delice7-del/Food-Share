@@ -11,20 +11,20 @@ export default function PrivacyPage() {
             <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-12">
                     <div className="flex items-center mb-8">
-                        <div className="bg-orange-100 p-3 rounded-2xl text-orange-600 mr-4">
+                        <div className="bg-primary-light p-3 rounded-2xl text-primary mr-4">
                             <ShieldAlert size={32} />
                         </div>
                         <h1 className="text-3xl font-extrabold text-gray-900">Privacy Policy</h1>
                     </div>
 
-                    <div className="prose prose-orange max-w-none text-gray-600 space-y-6">
+                    <div className="prose prose-primary max-w-none text-gray-600 space-y-6">
                         <p className="text-lg">
                             At FoodShare, we are committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information when you use our platform.
                         </p>
 
                         <section className="space-y-4">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                                <Eye className="mr-2 text-orange-500" size={20} />
+                                <Eye className="mr-2 text-primary-light0" size={20} />
                                 Information We Collect
                             </h2>
                             <p>
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
 
                         <section className="space-y-4">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                                <Lock className="mr-2 text-orange-500" size={20} />
+                                <Lock className="mr-2 text-primary-light0" size={20} />
                                 How We Use Your Information
                             </h2>
                             <ul className="list-disc pl-5 space-y-2">
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
 
                         <section className="space-y-4">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                                <FileText className="mr-2 text-orange-500" size={20} />
+                                <FileText className="mr-2 text-primary-light0" size={20} />
                                 Sharing Information
                             </h2>
                             <p>

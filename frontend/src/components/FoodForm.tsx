@@ -60,7 +60,7 @@ const FoodForm = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="e.g., Fresh Apples"
                 />
             </div>
@@ -73,7 +73,7 @@ const FoodForm = () => {
                     required
                     value={formData.quantity}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="e.g., 5kg, 3 boxes"
                 />
             </div>
@@ -86,7 +86,7 @@ const FoodForm = () => {
                     rows={3}
                     value={formData.description}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="What kind of food is it? Any special notes?"
                 />
             </div>
@@ -99,7 +99,7 @@ const FoodForm = () => {
                     required
                     value={formData.pickupLocation}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="Full address or landmark"
                 />
             </div>
@@ -112,7 +112,7 @@ const FoodForm = () => {
                     required
                     value={formData.expiryDate}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                 />
             </div>
 
@@ -123,7 +123,7 @@ const FoodForm = () => {
                     name="dietaryTags"
                     value={formData.dietaryTags}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="e.g., Vegan, Gluten-free, Nut-free"
                 />
             </div>
@@ -136,7 +136,7 @@ const FoodForm = () => {
                     required
                     value={formData.contactMethod}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="How should people reach you?"
                 />
             </div>
@@ -148,7 +148,7 @@ const FoodForm = () => {
                     name="imageUrl"
                     value={formData.imageUrl}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-light0 focus:outline-none focus:ring-1 focus:ring-primary-light0"
                     placeholder="https://example.com/photo.jpg"
                 />
             </div>
@@ -156,7 +156,7 @@ const FoodForm = () => {
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light0 disabled:opacity-50"
             >
                 {loading ? 'Posting...' : 'Post Listing'}
             </button>
