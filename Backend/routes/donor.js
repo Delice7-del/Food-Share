@@ -12,25 +12,43 @@ router.use(authorize('donor'));
 // @desc    Get donor dashboard stats
 router.get('/stats', async (req, res) => {
   try {
-    const activeDonations = await Donation.countDocuments({ 
+    const Food = require('../models/Food');
+    const Donation = require('../models/Donation');
+    const Request = require('../models/Request');
+
+    // Count Active Donations (Available in both models)
+    const activeDonationsCount = await Donation.countDocuments({ 
       donor: req.user._id, 
       status: 'available' 
     });
+    const activeFoodCount = await Food.countDocuments({ 
+      donor: req.user._id, 
+      status: 'available' 
+    });
+
+    // Count Pending Requests
     const pendingRequests = await Request.countDocuments({ 
       donorId: req.user._id, 
       status: 'Pending' 
     });
-    const completedDonations = await Donation.countDocuments({ 
+
+    // Count Completed/Claimed Donations
+    const pickedUpDonations = await Donation.countDocuments({ 
       donor: req.user._id, 
       status: 'picked-up' 
     });
+    const claimedFood = await Food.countDocuments({ 
+      donor: req.user._id, 
+      status: 'claimed' 
+    });
 
     res.json({
-      activeDonations,
+      activeDonations: activeDonationsCount + activeFoodCount,
       pendingRequests,
-      completedDonations
+      completedDonations: pickedUpDonations + claimedFood
     });
   } catch (err) {
+    console.error('Stats error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -39,10 +57,18 @@ router.get('/stats', async (req, res) => {
 // @desc    Get recent donations for dashboard
 router.get('/donations/recent', async (req, res) => {
   try {
-    const donations = await Donation.find({ donor: req.user._id })
-      .sort({ createdAt: -1 })
-      .limit(5);
-    res.json(donations);
+    const Food = require('../models/Food');
+    const [donations, foods] = await Promise.all([
+      Donation.find({ donor: req.user._id }).sort({ createdAt: -1 }).limit(5),
+      Food.find({ donor: req.user._id }).sort({ createdAt: -1 }).limit(5)
+    ]);
+
+    // Combine and sort by createdAt descending
+    const combined = [...donations, ...foods]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
+    res.json(combined);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -67,7 +93,9 @@ router.get('/requests', async (req, res) => {
 router.patch('/requests/:id', async (req, res) => {
   const { status, pickupInstructions } = req.body;
   try {
-    const request = await Request.findOne({ _id: req.id, donorId: req.user._id });
+    const request = await Request.findOne({ _id: req.params.id, donorId: req.user._id })
+      .populate('donationId');
+      
     if (!request) return res.status(404).json({ error: 'Request not found' });
 
     request.status = status;
@@ -76,18 +104,34 @@ router.patch('/requests/:id', async (req, res) => {
 
     // If accepted, update donation status
     if (status === 'Accepted') {
-      await Donation.findByIdAndUpdate(request.donationId, { status: 'reserved' });
+      // Find and update the donation (either Food or Donation model)
+      const DonationModel = require('../models/Donation');
+      const FoodModel = require('../models/Food');
+      
+      await DonationModel.findByIdAndUpdate(request.donationId, { status: 'reserved' });
+      await FoodModel.findByIdAndUpdate(request.donationId, { status: 'claimed' });
     }
 
     // Create notification for receiver
     const Notification = require('../models/Notification');
-    await Notification.create({
+    const notificationData = {
       recipient: request.receiverId,
       type: status === 'Accepted' ? 'request_accepted' : 'request_rejected',
       title: `Request ${status}`,
-      message: `Your request for "${request.donationId.title}" has been ${status.toLowerCase()}.`,
+      message: `Your request for "${request.donationId?.title || request.donationId?.name || 'Food Item'}" has been ${status.toLowerCase()}.`,
       link: '/receiver/dashboard'
-    });
+    };
+    await Notification.create(notificationData);
+
+    // Emit real-time notification
+    const io = req.app.get('io');
+    if (io) {
+      io.to(request.receiverId.toString()).emit('notification', {
+        title: notificationData.title,
+        message: notificationData.message,
+        type: notificationData.type
+      });
+    }
 
     res.json(request);
   } catch (err) {

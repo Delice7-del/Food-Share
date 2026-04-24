@@ -1,13 +1,37 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Heart, HandHeart, ShoppingBag, ArrowRight, ShieldCheck, Globe, Users } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+const PLATES = [
+  '/hero/plate1.png',
+  '/hero/plate2.png',
+  '/hero/plate3.png',
+  '/hero/plate4.png',
+  '/hero/plate5.png',
+  '/hero/plate6.png',
+];
+
 export default function LandingPage() {
   const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextPlate = () => {
+    setCurrentIndex((prev) => (prev + 1) % PLATES.length);
+  };
+
+  const prevPlate = () => {
+    setCurrentIndex((prev) => (prev - 1 + PLATES.length) % PLATES.length);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(nextPlate, 5000);
+    return () => clearInterval(timer);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
       <Navbar />
@@ -59,11 +83,12 @@ export default function LandingPage() {
             <div className="relative h-[600px] flex items-center justify-center">
               {/* Main Plate */}
               <div className="relative z-20 animate-float">
-                <div className="w-[400px] h-[400px] md:w-[500px] md:h-[500px] rounded-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] overflow-hidden border-[15px] border-white">
+                <div className="w-[400px] h-[400px] md:w-[500px] md:h-[500px] rounded-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] overflow-hidden border-[15px] border-white bg-white">
                   <img 
-                    src="/hero/plate1.png" 
+                    key={currentIndex}
+                    src={PLATES[currentIndex]} 
                     alt="Main Dish" 
-                    className="w-full h-full object-cover animate-spin-slow" 
+                    className="w-full h-full object-cover animate-spin-slow animate-fade-in" 
                   />
                 </div>
                 
@@ -94,10 +119,16 @@ export default function LandingPage() {
 
               {/* Navigation Arrows */}
               <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-10 z-30">
-                <button className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary-dark hover:scale-110 cursor-pointer transition-all">
+                <button 
+                  onClick={prevPlate}
+                  className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary-dark hover:scale-110 cursor-pointer transition-all active:scale-95"
+                >
                    <ArrowRight className="rotate-180" />
                 </button>
-                <button className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary-dark hover:scale-110 cursor-pointer transition-all">
+                <button 
+                  onClick={nextPlate}
+                  className="w-16 h-16 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary-dark hover:scale-110 cursor-pointer transition-all active:scale-95"
+                >
                    <ArrowRight />
                 </button>
               </div>

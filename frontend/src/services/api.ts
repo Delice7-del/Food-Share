@@ -13,7 +13,17 @@ const api = axios.create({
 // Add a request interceptor to include the token in headers
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        // Multi-session support: Pick the token based on the current portal path
+        const isDonorPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/donor');
+        const isReceiverPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/receiver');
+        
+        let token = null;
+        if (isDonorPath) token = localStorage.getItem('token_donor');
+        else if (isReceiverPath) token = localStorage.getItem('token_receiver');
+        
+        // Fallback to legacy token if role-specific one isn't found
+        if (!token) token = localStorage.getItem('token');
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

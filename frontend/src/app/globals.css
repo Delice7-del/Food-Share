@@ -34,18 +34,60 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-saira), sans-serif;
 }
 
+button, 
+a, 
+select, 
+input[type="submit"], 
+input[type="button"],
+.clickable {
+  cursor: pointer;
+  @apply transition-all duration-300 active:scale-95;
+}
+
+button:hover,
+.clickable:hover {
+  @apply scale-[1.02];
+}
+
 @layer components {
+  /* Global Button and Link Styles */
   .btn-primary {
-    background-color: var(--primary);
-    @apply text-gray-900 px-6 py-3 rounded-2xl font-heading font-extrabold hover:bg-[var(--primary-hover)] transition-all shadow-lg shadow-[#F5CBB2]/20 active:scale-95 uppercase tracking-wider;
+    @apply bg-primary text-gray-900 px-6 py-3 rounded-2xl font-heading font-extrabold transition-all duration-300 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-wider;
+  }
+
+  .btn-primary:hover {
+    @apply scale-105 shadow-xl shadow-primary/30 brightness-105 -translate-y-0.5;
+  }
+
+  .btn-primary:active {
+    @apply scale-95 translate-y-0;
+  }
+
+  /* Link Hover */
+  a:not(.btn-primary) {
+    @apply transition-all duration-300;
+  }
+  
+  a:not(.btn-primary):hover {
+    @apply opacity-80;
+  }
+
+  /* Glass Card Style & Hover */
+  .card {
+    @apply bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 transition-all duration-300;
+  }
+
+  .card:hover {
+    @apply shadow-xl shadow-gray-200/50 border-primary/20 -translate-y-1;
+  }
+
+  /* Interactive Element Hover */
+  .interactive-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 cursor-pointer;
   }
 
   .input-field {
     @apply w-full px-5 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-[#F5CBB2] focus:border-transparent outline-none transition-all bg-white/50 backdrop-blur-sm;
-  }
-
-  .card {
-    @apply bg-white rounded-3xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300;
   }
 }
 
@@ -92,7 +134,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 .animate-fade-in {
-  animation: fade-in 1s ease-out forwards;
+  animation: fade-in 0.5s ease-out forwards;
 }
 
 .animate-pulse-slow {

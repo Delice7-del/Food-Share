@@ -50,6 +50,23 @@ router.post('/', async (req, res) => {
     });
 
     const populatedMessage = await message.populate('sender', 'firstName lastName');
+    
+    // Real-time chat message
+    const io = req.app.get('io');
+    if (io) {
+      io.to(recipient.toString()).emit('new_message', {
+        requestId,
+        message: populatedMessage
+      });
+      
+      // Also send a general notification
+      io.to(recipient.toString()).emit('notification', {
+        title: 'New Message',
+        message: `${req.user.firstName} sent you a message.`,
+        type: 'chat_message'
+      });
+    }
+
     res.status(201).json(populatedMessage);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });

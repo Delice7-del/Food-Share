@@ -7,8 +7,34 @@ require('dotenv').config();
 
 const compression = require('compression');
 const morgan = require('morgan');
+const http = require('http');
+const socketio = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"]
+  }
+});
+
+// Socket.io connection logic
+io.on('connection', (socket) => {
+  const userId = socket.handshake.query.userId;
+  if (userId) {
+    socket.join(userId);
+    console.log(`✅ User ${userId} joined room`);
+  }
+
+  socket.on('disconnect', () => {
+    console.log('❌ User disconnected');
+  });
+});
+
+// Make io accessible in routes
+app.set('io', io);
+
 const PORT = process.env.PORT || 5002;
 
 // Import routes
@@ -20,6 +46,8 @@ const donorRoutes = require('./routes/donor');
 const receiverRoutes = require('./routes/receiver');
 const notificationRoutes = require('./routes/notifications');
 const messageRoutes = require('./routes/messages');
+const donationRoutes = require('./routes/donations');
+const mapRoutes = require('./routes/map');
 
 app.use(helmet());
 app.use(compression());
@@ -30,11 +58,10 @@ if (process.env.NODE_ENV === 'development') {
 // CORS configuration
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests from any origin in development, including file://
+    // Allow requests from any origin in development
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
-    // In production, restrict to your domain
     const allowedOrigins = ['https://yourdomain.com'];
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -46,8 +73,8 @@ app.use(cors({
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, 
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, 
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);
@@ -77,6 +104,8 @@ app.use('/api/donor', donorRoutes);
 app.use('/api/receiver', receiverRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/donations', donationRoutes);
+app.use('/api/map', mapRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -89,10 +118,8 @@ app.use('*', (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
-
   res.status(statusCode).json({
     error: message,
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
@@ -108,10 +135,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/foodshare
     console.log('✅ Connected to MongoDB');
 
     // Start server
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 FoodShare API server running on port ${PORT}`);
       console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
     });
   })
   .catch((err) => {

@@ -74,45 +74,39 @@ router.get('/', optionalAuth, [
       query.expiryDate = { $gt: new Date() };
     }
 
-    // Calculate skip value for pagination
-    const skip = (page - 1) * limit;
-
+    const Food = require('../models/Food');
     let donations;
     let total;
 
-    // If coordinates provided, use geospatial query
-    if (lat && lng) {
-      const coordinates = [parseFloat(lng), parseFloat(lat)];
-      
-      donations = await Donation.findNearby(coordinates, parseFloat(radius), { category })
+    // Regular query without geospatial (simplified for merging)
+    const [donationList, foodList] = await Promise.all([
+      Donation.find(query)
         .sort({ [sort]: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .populate('donor', 'firstName lastName organization');
+        .populate('donor', 'firstName lastName organization'),
+      Food.find({ status: 'available' })
+        .sort({ createdAt: -1 })
+        .populate('donor', 'firstName lastName organization')
+    ]);
 
-      // Get total count for pagination
-      total = await Donation.countDocuments({
-        ...query,
-        location: {
-          $near: {
-            $geometry: {
-              type: 'Point',
-              coordinates: coordinates
-            },
-            $maxDistance: parseFloat(radius) * 1609.34
-          }
-        }
-      });
-    } else {
-      // Regular query without geospatial
-      donations = await Donation.find(query)
-        .sort({ [sort]: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .populate('donor', 'firstName lastName organization');
+    // Normalize legacy Food items
+    const normalizedFoods = foodList.map(f => {
+      const obj = f.toObject();
+      return {
+        ...obj,
+        title: f.name,
+        quantity: { amount: parseFloat(f.quantity) || 0, unit: 'items' },
+        location: { address: { city: f.pickupLocation, street: f.pickupLocation } },
+        isLegacy: true
+      };
+    });
 
-      total = await Donation.countDocuments(query);
-    }
+    const combined = [...donationList, ...normalizedFoods]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    // Manual pagination for combined results
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    donations = combined.slice(skip, skip + parseInt(limit));
+    total = combined.length;
 
     // Calculate pagination info
     const totalPages = Math.ceil(total / limit);
@@ -138,6 +132,43 @@ router.get('/', optionalAuth, [
     res.status(500).json({
       error: 'Failed to fetch donations',
       message: 'An error occurred while fetching donations'
+    });
+  }
+});
+
+
+// @route   GET /api/donations/my
+// @desc    Get current donor's donations
+router.get('/my', protect, authorize('donor'), async (req, res) => {
+  try {
+    const Food = require('../models/Food');
+    const [donations, foods] = await Promise.all([
+      Donation.find({ donor: req.user._id }).sort({ createdAt: -1 }),
+      Food.find({ donor: req.user._id }).sort({ createdAt: -1 })
+    ]);
+
+    // Normalize legacy Food items for frontend
+    const normalizedFoods = foods.map(f => ({
+      ...f.toObject(),
+      title: f.name,
+      quantity: { amount: parseFloat(f.quantity) || 0, unit: 'items' },
+      location: { address: { street: f.pickupLocation } },
+      status: f.status === 'claimed' ? 'picked-up' : 'available'
+    }));
+
+    const combined = [...donations, ...normalizedFoods].sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    res.json({
+      success: true,
+      data: { donations: combined }
+    });
+  } catch (error) {
+    console.error('Get my donations error:', error);
+    res.status(500).json({
+      error: 'Failed to fetch your donations',
+      message: 'An error occurred while fetching your donations'
     });
   }
 });
@@ -182,7 +213,8 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.post('/', [
+
+router.post('/', protect, authorize('donor'), [
   body('title')
     .trim()
     .isLength({ min: 3, max: 100 })
@@ -249,7 +281,8 @@ router.post('/', [
     }
 
     const donationData = {
-      ...req.body
+      ...req.body,
+      donor: req.user._id
     };
 
     // Validate pickup date is not in the past
@@ -281,6 +314,16 @@ router.post('/', [
       message: 'Donation created successfully',
       data: { donation }
     });
+
+    // Broadcast to everyone that new food is available
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('donation_created', {
+        id: donation._id,
+        title: donation.title,
+        category: donation.category
+      });
+    }
   } catch (error) {
     console.error('Create donation error:', error);
     res.status(500).json({
@@ -362,6 +405,15 @@ router.put('/:id', protect, authorize('donor'), [
       message: 'Donation updated successfully',
       data: { donation: updatedDonation }
     });
+
+    // Broadcast status update
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('donation_updated', {
+        id: updatedDonation._id,
+        status: updatedDonation.status
+      });
+    }
   } catch (error) {
     console.error('Update donation error:', error);
     

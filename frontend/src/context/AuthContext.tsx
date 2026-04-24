@@ -18,6 +18,7 @@ interface AuthContextType {
     loading: boolean;
     login: (token: string, userData: User) => void;
     logout: () => void;
+    setUser: (user: User | null) => void;
     checkAuth: () => Promise<void>;
 }
 
@@ -29,23 +30,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
 
     const login = (token: string, userData: User) => {
+        // Use role-specific token keys to allow multi-session testing
+        const tokenKey = `token_${userData.role}`;
+        localStorage.setItem(tokenKey, token);
+        // Also set a generic token for simple requests if needed, 
+        // but the API interceptor will prioritize the role-specific one
         localStorage.setItem('token', token);
+        
         setUser(userData);
         if (userData.role === 'donor') {
             router.push('/donor/dashboard');
         } else {
-            router.push('/');
+            router.push('/receiver/dashboard');
         }
     };
 
     const logout = () => {
+        if (user) {
+            localStorage.removeItem(`token_${user.role}`);
+        }
         localStorage.removeItem('token');
         setUser(null);
         router.push('/login');
     };
 
     const checkAuth = async () => {
-        const token = localStorage.getItem('token');
+        // Detect role from path to find the right token
+        const isDonorPath = window.location.pathname.startsWith('/donor');
+        const isReceiverPath = window.location.pathname.startsWith('/receiver');
+        
+        let token = null;
+        if (isDonorPath) token = localStorage.getItem('token_donor');
+        else if (isReceiverPath) token = localStorage.getItem('token_receiver');
+        
+        if (!token) token = localStorage.getItem('token');
+
         if (!token) {
             setLoading(false);
             return;
@@ -67,7 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, setUser, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );

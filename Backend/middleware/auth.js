@@ -87,7 +87,7 @@ const authorize = (...roles) => {
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         error: 'Access denied',
-        message: `User role '${req.user.role}' is not authorized to access this route`
+        message: `User role '${req.user.role}' is not authorized to access this resource. Required roles: ${roles.join(', ')}`
       });
     }
 

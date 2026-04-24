@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from '@/context/AuthContext';
+import { SocketProvider } from '@/context/SocketContext';
 
 export default function RootLayout({
   children,
@@ -32,7 +33,9 @@ export default function RootLayout({
         className={`${sairaCondensed.variable} ${anticSlab.variable} font-body antialiased`}
       >
         <AuthProvider>
-          {children}
+          <SocketProvider>
+            {children}
+          </SocketProvider>
         </AuthProvider>
       </body>
     </html>
