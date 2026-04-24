@@ -75,18 +75,19 @@ router.get('/', optionalAuth, [
     }
 
     const Food = require('../models/Food');
-    let donations;
-    let total;
+    console.log('--- Fetching Donations ---');
+    const donationList = await Donation.find(query)
+      .sort({ [sort]: -1 })
+      .populate('donor', 'firstName lastName organization');
+    
+    console.log(`Found ${donationList.length} donations`);
 
-    // Regular query without geospatial (simplified for merging)
-    const [donationList, foodList] = await Promise.all([
-      Donation.find(query)
-        .sort({ [sort]: -1 })
-        .populate('donor', 'firstName lastName organization'),
-      Food.find({ status: 'available' })
-        .sort({ createdAt: -1 })
-        .populate('donor', 'firstName lastName organization')
-    ]);
+    console.log('--- Fetching Legacy Food ---');
+    const foodList = await Food.find({ status: 'available' })
+      .sort({ createdAt: -1 })
+      .populate('donor', 'firstName lastName organization');
+    
+    console.log(`Found ${foodList.length} legacy foods`);
 
     // Normalize legacy Food items
     const normalizedFoods = foodList.map(f => {
@@ -103,20 +104,22 @@ router.get('/', optionalAuth, [
     const combined = [...donationList, ...normalizedFoods]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+    console.log(`Combined total: ${combined.length}`);
+
     // Manual pagination for combined results
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    donations = combined.slice(skip, skip + parseInt(limit));
-    total = combined.length;
+    const paginatedDonations = combined.slice(skip, skip + parseInt(limit));
+    const total = combined.length;
 
     // Calculate pagination info
-    const totalPages = Math.ceil(total / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
+    const totalPages = Math.ceil(total / parseInt(limit));
+    const hasNextPage = parseInt(page) < totalPages;
+    const hasPrevPage = parseInt(page) > 1;
 
     res.json({
       success: true,
       data: {
-        donations,
+        donations: paginatedDonations,
         pagination: {
           currentPage: parseInt(page),
           totalPages,

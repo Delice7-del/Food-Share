@@ -16,10 +16,12 @@ export default function BrowseFood() {
   const fetchFoods = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/food');
-      setFoods(res.data);
+      const res = await api.get('/donations');
+      // Update to handle unified API structure
+      const foodData = res.data.data?.donations || res.data;
+      setFoods(Array.isArray(foodData) ? foodData : []);
     } catch (err) {
-      console.error('Failed to fetch foods');
+      console.error('Failed to fetch foods', err);
     } finally {
       setLoading(false);
     }
@@ -30,9 +32,18 @@ export default function BrowseFood() {
   }, []);
 
   const filteredFoods = foods.filter((food: any) => {
-    const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      food.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all' || food.dietaryTags.includes(filter);
+    // Support both legacy (name) and modern (title) properties
+    const title = food.title || food.name || '';
+    const description = food.description || '';
+    
+    const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Support both legacy (dietaryTags) and modern (category/dietary) properties
+    const category = food.category || '';
+    const tags = food.dietaryTags || [];
+    const matchesFilter = filter === 'all' || category === filter || tags.includes(filter);
+    
     return matchesSearch && matchesFilter;
   });
 

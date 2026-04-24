@@ -76,11 +76,35 @@ const FoodCard = ({ food, onClaim, onDelete }: FoodProps) => {
 
     const isExpired = new Date(food.expiryDate) < new Date();
 
+    // Helper to safely get quantity string
+    const getQuantityStr = () => {
+        if (typeof food.quantity === 'object' && food.quantity !== null) {
+            return `${(food.quantity as any).amount} ${(food.quantity as any).unit}`;
+        }
+        return food.quantity || 'Not specified';
+    };
+
+    // Helper to safely get location string
+    const getLocationStr = () => {
+        if (typeof (food as any).location === 'object' && (food as any).location !== null) {
+            const loc = (food as any).location;
+            return loc.address?.street || loc.address?.city || 'Local Area';
+        }
+        return (food as any).pickupLocation || 'Local Area';
+    };
+
+    // Helper to safely get dietary tags
+    const getDietaryTags = () => {
+        if (Array.isArray(food.dietaryTags) && food.dietaryTags.length > 0) return food.dietaryTags;
+        if ((food as any).category) return [(food as any).category];
+        return [];
+    };
+
     return (
         <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-primary-light hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
             {food.imageUrl ? (
                 <div className="h-48 overflow-hidden">
-                    <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={food.imageUrl} alt={food.title || food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
             ) : (
                 <div className="h-48 bg-primary-light flex items-center justify-center">
@@ -89,35 +113,37 @@ const FoodCard = ({ food, onClaim, onDelete }: FoodProps) => {
             )}
             <div className="p-6 flex flex-col flex-grow">
                 <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-heading font-bold text-gray-900">{food.name}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-heading font-semibold ${food.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                    <h3 className="text-lg font-heading font-bold text-gray-900 truncate pr-2">
+                        {food.title || food.name}
+                    </h3>
+                    <span className={`px-2 py-1 rounded-full text-[10px] font-heading font-extrabold uppercase tracking-wider ${food.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                         }`}>
-                        {food.status === 'available' ? 'Available' : 'Claimed'}
+                        {food.status}
                     </span>
                 </div>
 
-                <p className="mt-2 text-sm text-gray-600 line-clamp-2">{food.description}</p>
+                <p className="mt-2 text-sm text-gray-600 line-clamp-2 leading-relaxed">{food.description}</p>
 
                 <div className="mt-4 space-y-2 flex-grow">
                     <div className="flex items-center text-sm text-gray-500">
-                        <Tag className="h-4 w-4 mr-2" />
-                        <span>Quantity: {food.quantity}</span>
+                        <Tag className="h-4 w-4 mr-2 text-primary" />
+                        <span>Quantity: {getQuantityStr()}</span>
                     </div>
                     <div className="flex items-center text-sm text-gray-500 font-medium">
-                        <Calendar className="h-4 w-4 mr-2 text-primary-light0" />
-                        <span className={isExpired ? 'text-red-600 font-bold' : 'text-primary font-bold'}>
+                        <Calendar className="h-4 w-4 mr-2 text-primary" />
+                        <span className={isExpired ? 'text-red-600 font-bold' : 'text-gray-700 font-bold'}>
                             {getTimeLeft()}
                         </span>
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span>{food.pickupLocation}</span>
+                        <MapPin className="h-4 w-4 mr-2 text-primary" />
+                        <span className="truncate">{getLocationStr()}</span>
                     </div>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                    {food.dietaryTags.map((tag) => (
-                        <span key={tag} className="bg-primary-light text-primary-hover px-2 py-1 rounded text-xs font-heading font-medium">
+                    {getDietaryTags().map((tag) => (
+                        <span key={tag} className="bg-primary/5 text-primary-hover px-2 py-1 rounded text-[10px] font-heading font-extrabold uppercase tracking-wider">
                             {tag}
                         </span>
                     ))}
