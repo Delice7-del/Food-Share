@@ -186,7 +186,7 @@ const RegisterPage = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-[#F5CBB2] hover:bg-[#e4b89d] text-gray-900 font-heading font-extrabold py-4 rounded-lg transition-colors shadow-lg uppercase tracking-wider text-sm cursor-pointer disabled:cursor-not-allowed"
+                                className="w-full bg-primary hover:bg-primary-hover text-white font-heading font-extrabold py-4 rounded-lg transition-colors shadow-lg uppercase tracking-wider text-sm cursor-pointer disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Signing up...' : 'Sign up'}
                             </button>
@@ -194,7 +194,7 @@ const RegisterPage = () => {
 
                         <div className="text-center text-xs text-gray-800 font-medium mt-6 flex items-center justify-center space-x-2">
                             <span>Already a Member?</span>
-                            <Link href="/login" className="text-gray-900 font-extrabold hover:text-[#e4b89d] transition-colors">
+                            <Link href="/login" className="text-gray-900 font-extrabold hover:text-primary-hover transition-colors">
                                 Sign in here
                             </Link>
                         </div>

@@ -60,7 +60,7 @@ export default function ReceiverLayout({ children }: { children: React.ReactNode
           <Link href="/receiver/dashboard" className="text-2xl font-heading font-extrabold text-primary">
             FoodShare
           </Link>
-          <p className="text-[10px] text-gray-400 font-heading uppercase tracking-widest mt-1">
+          <p className="text-[10px] text-gray-600 font-heading font-extrabold uppercase tracking-widest mt-1">
             Receiver Portal
           </p>
           <div className="mt-4 flex items-center gap-3">
@@ -71,7 +71,7 @@ export default function ReceiverLayout({ children }: { children: React.ReactNode
               <p className="text-sm font-heading font-bold text-gray-800 truncate">
                 {user.firstName} {user.lastName}
               </p>
-              <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
+              <p className="text-[10px] text-gray-600 font-bold truncate">{user.email}</p>
             </div>
           </div>
         </div>
@@ -86,8 +86,8 @@ export default function ReceiverLayout({ children }: { children: React.ReactNode
                 href={href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-heading text-sm font-medium ${
                   active
-                    ? 'bg-primary-light text-primary font-bold shadow-sm'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-primary text-white font-bold shadow-lg shadow-primary/20'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <Icon size={18} />
@@ -141,8 +141,8 @@ export default function ReceiverLayout({ children }: { children: React.ReactNode
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-heading text-sm font-medium ${
                   active
-                    ? 'bg-primary-light text-primary font-bold'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-primary text-white font-bold'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <Icon size={18} />

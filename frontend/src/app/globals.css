@@ -2,17 +2,17 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-  --primary: #F5CBB2;
-  --primary-hover: #e4b89d;
-  --primary-light: #fdf2ec;
+  --foreground: #111827;
+  --primary: #111827;
+  --primary-hover: #1f2937;
+  --primary-light: #F5CBB2;
 }
 
 @theme {
-  --color-primary: #F5CBB2;
-  --color-primary-hover: #e4b89d;
-  --color-primary-light: #fdf2ec;
-  --color-primary-dark: #4a3427;
+  --color-primary: #111827;
+  --color-primary-hover: #1f2937;
+  --color-primary-light: #F5CBB2;
+  --color-primary-dark: #030712;
   --font-heading: var(--font-saira);
   --font-body: var(--font-antic);
 }
@@ -52,7 +52,7 @@ button:hover,
 @layer components {
   /* Global Button and Link Styles */
   .btn-primary {
-    @apply bg-primary text-gray-900 px-6 py-3 rounded-2xl font-heading font-extrabold transition-all duration-300 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-wider;
+    @apply bg-primary text-white px-6 py-3 rounded-2xl font-heading font-extrabold transition-all duration-300 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-wider;
   }
 
   .btn-primary:hover {

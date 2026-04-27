@@ -210,12 +210,12 @@ export default function FoodDetailsPage() {
                                 )}
 
                                 {(!user || user.role !== 'receiver') && food.status === 'available' && !isExpired && (
-                                    <div className="bg-blue-50 p-6 rounded-2xl text-blue-800 flex items-start">
-                                        <div className="mr-4 mt-1"><Utensils size={20} /></div>
+                                    <div className="bg-gray-900 p-6 rounded-2xl text-white flex items-start shadow-xl">
+                                        <div className="mr-4 mt-1"><Utensils size={20} className="text-primary-light" /></div>
                                         <div>
                                             <p className="font-bold font-heading">Interested in this food?</p>
-                                            <p className="text-sm mt-1">Please log in as a <strong>Receiver</strong> to send a request to the donor.</p>
-                                            <Link href="/login" className="inline-block mt-3 font-bold underline">Log in now</Link>
+                                            <p className="text-sm mt-1 text-gray-300">Please log in as a <strong>Receiver</strong> to send a request to the donor.</p>
+                                            <Link href="/login" className="inline-block mt-3 font-bold text-primary-light hover:underline transition-colors">Log in now</Link>
                                         </div>
                                     </div>
                                 )}

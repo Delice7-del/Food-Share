@@ -53,7 +53,7 @@ export default function ReceiverDashboard() {
           <h1 className="text-3xl font-heading font-extrabold text-gray-900">
             Hello, {user?.firstName || 'Sandra'}! 👋
           </h1>
-          <p className="text-gray-500 mt-1">Here's what's happening with your food requests today.</p>
+          <p className="text-gray-700 mt-1 font-medium">Here's what's happening with your food requests today.</p>
         </div>
         <Link href="/receiver/browse" className="btn-primary flex items-center justify-center gap-2 group">
           <span>Browse Available Food</span>
@@ -63,12 +63,12 @@ export default function ReceiverDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="card border-l-4 border-l-blue-500 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500">
+        <div className="card border-l-4 border-l-primary flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-primary-light/10 flex items-center justify-center text-primary">
             <Package size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-medium">Total Requests</p>
+            <p className="text-sm text-gray-700 font-bold">Total Requests</p>
             <p className="text-2xl font-heading font-extrabold text-gray-900">{stats.total}</p>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function ReceiverDashboard() {
             <CheckCircle size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-medium">Accepted</p>
+            <p className="text-sm text-gray-700 font-bold">Accepted</p>
             <p className="text-2xl font-heading font-extrabold text-gray-900">{stats.accepted}</p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function ReceiverDashboard() {
             <Clock size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-medium">Pending</p>
+            <p className="text-sm text-gray-700 font-bold">Pending</p>
             <p className="text-2xl font-heading font-extrabold text-gray-900">{stats.pending}</p>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function ReceiverDashboard() {
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       request.status === 'Accepted' ? 'bg-green-100 text-green-600' :
                       request.status === 'Rejected' ? 'bg-red-100 text-red-600' :
-                      'bg-blue-100 text-blue-600'
+                      'bg-primary-light/20 text-primary'
                     }`}>
                       <Package size={18} />
                     </div>
@@ -129,7 +129,7 @@ export default function ReceiverDashboard() {
                       <p className="text-sm font-heading font-bold text-gray-900 truncate max-w-[150px]">
                         {request.donationId?.title || 'Food Item'}
                       </p>
-                      <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-600 font-bold">
                         {new Date(request.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -137,7 +137,7 @@ export default function ReceiverDashboard() {
                   <span className={`px-2 py-1 rounded-lg text-[10px] font-heading font-extrabold uppercase tracking-wider ${
                     request.status === 'Accepted' ? 'bg-green-100 text-green-700' :
                     request.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                    'bg-blue-100 text-blue-700'
+                    'bg-primary-light/30 text-primary'
                   }`}>
                     {request.status}
                   </span>
@@ -147,7 +147,7 @@ export default function ReceiverDashboard() {
           ) : (
             <div className="text-center py-12">
               <ShoppingBag className="mx-auto h-12 w-12 text-gray-200 mb-3" />
-              <p className="text-gray-500 text-sm">No recent activity found.</p>
+              <p className="text-gray-700 text-sm font-medium">No recent activity found.</p>
             </div>
           )}
         </div>

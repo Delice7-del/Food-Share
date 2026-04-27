@@ -101,7 +101,7 @@ export default function NotificationsPage() {
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
                 notification.type === 'request_accepted' ? 'bg-green-100 text-green-600' :
                 notification.type === 'request_rejected' ? 'bg-red-100 text-red-600' :
-                'bg-blue-100 text-blue-600'
+                'bg-primary-light/20 text-primary'
               }`}>
                 {notification.type === 'request_accepted' ? <CheckCircle2 size={24} /> :
                  notification.type === 'request_rejected' ? <XCircle size={24} /> :

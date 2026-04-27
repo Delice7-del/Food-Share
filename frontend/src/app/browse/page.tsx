@@ -36,9 +36,8 @@ export default function BrowseFood() {
     try {
       const res = await api.get('/donations');
       // Update to handle unified API structure
-      const foodData = res.data.data?.donations || res.data;
-      const foodsArray = Array.isArray(foodData) ? foodData : [];
-      setFoods(foodsArray);
+      const foodData = res.data.data?.donations || (Array.isArray(res.data) ? res.data : []);
+      setFoods(foodData);
     } catch (err) {
       console.error('Failed to fetch foods', err);
     } finally {
@@ -119,10 +118,15 @@ export default function BrowseFood() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
-            <Utensils className="mx-auto h-16 w-16 text-gray-200 mb-4" />
-            <p className="text-gray-500 text-xl font-heading font-bold">No food listings found.</p>
-            <p className="text-gray-400 mt-1">Try adjusting your search or filters.</p>
+          <div className="text-center py-24 bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-100 max-w-2xl mx-auto animate-slide-up">
+            <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-8">
+              <Utensils className="h-12 w-12 text-primary" />
+            </div>
+            <h3 className="text-3xl font-heading font-extrabold text-primary mb-3">No food listings found</h3>
+            <p className="text-gray-500 max-w-sm mx-auto mb-10">We couldn't find any donations matching your search. Try adjusting your filters or check back later!</p>
+            <button onClick={() => {setSearchTerm(''); setFilter('all');}} className="btn-primary px-10 mx-auto w-fit">
+              Clear All Filters
+            </button>
           </div>
         )}
       </main>

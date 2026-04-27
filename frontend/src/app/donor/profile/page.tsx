@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/services/api';
 import { 
-  User, 
+  User as UserIcon, 
   Mail, 
   Building2, 
   Phone, 
@@ -74,7 +74,7 @@ export default function DonorProfilePage() {
           <div className="card p-8 flex flex-col items-center text-center">
             <div className="relative group mb-6">
               <div className="w-32 h-32 rounded-[2.5rem] bg-primary/10 flex items-center justify-center text-primary font-heading font-bold text-4xl shadow-inner">
-                {user?.firstName[0]}{user?.lastName[0]}
+                {user?.firstName?.[0] || 'U'}{user?.lastName?.[0] || ''}
               </div>
               <button className="absolute bottom-0 right-0 p-3 bg-white rounded-2xl shadow-xl border border-gray-100 text-gray-400 hover:text-primary transition-all group-hover:scale-110">
                 <Camera size={18} />
@@ -110,7 +110,7 @@ export default function DonorProfilePage() {
               <div>
                 <label className="block text-xs font-heading font-extrabold text-gray-400 uppercase tracking-widest mb-2">First Name</label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                   <input
                     type="text"
                     name="firstName"
@@ -124,7 +124,7 @@ export default function DonorProfilePage() {
               <div>
                 <label className="block text-xs font-heading font-extrabold text-gray-400 uppercase tracking-widest mb-2">Last Name</label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                   <input
                     type="text"
                     name="lastName"

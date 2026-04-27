@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/services/api';
 import { 
-  User, 
+  User as UserIcon, 
   Mail, 
   Building2, 
   Phone, 
@@ -133,7 +133,7 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-xs font-heading font-extrabold text-gray-400 uppercase tracking-widest">First Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
                       type="text"
                       name="firstName"
@@ -147,7 +147,7 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-xs font-heading font-extrabold text-gray-400 uppercase tracking-widest">Last Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
                       type="text"
                       name="lastName"

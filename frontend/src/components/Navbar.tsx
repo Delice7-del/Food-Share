@@ -27,13 +27,13 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-16">
                     <div className="flex">
                         <Link href="/" className="flex-shrink-0 flex items-center">
-                            <Utensils className="h-9 w-9 text-primary-dark" />
+                            <Utensils className="h-9 w-9 text-primary" />
                             <span className="ml-2 text-2xl font-heading font-extrabold text-gray-900 tracking-tight">FoodShare</span>
                         </Link>
                         <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
                             <Link
                                 href="/browse"
-                                className="inline-flex items-center px-1 pt-1 text-sm font-heading font-bold text-gray-500 hover:text-primary-dark transition-colors"
+                                className="inline-flex items-center px-1 pt-1 text-sm font-heading font-extrabold text-gray-700 hover:text-primary transition-colors"
                             >
                                 Browse
                             </Link>
@@ -41,13 +41,13 @@ const Navbar = () => {
                                 <>
                                     <Link
                                         href="/#mission"
-                                        className="inline-flex items-center px-1 pt-1 text-sm font-heading font-bold text-gray-500 hover:text-primary-dark transition-colors"
+                                        className="inline-flex items-center px-1 pt-1 text-sm font-heading font-extrabold text-gray-700 hover:text-primary transition-colors"
                                     >
                                         Mission
                                     </Link>
                                     <Link
                                         href="/about"
-                                        className="inline-flex items-center px-1 pt-1 text-sm font-heading font-bold text-gray-500 hover:text-primary-dark transition-colors"
+                                        className="inline-flex items-center px-1 pt-1 text-sm font-heading font-extrabold text-gray-700 hover:text-primary transition-colors"
                                     >
                                         About
                                     </Link>
@@ -57,14 +57,14 @@ const Navbar = () => {
                                     {user.role === 'donor' ? (
                                         <Link
                                             href="/donor/dashboard"
-                                            className="inline-flex items-center px-1 pt-1 text-sm font-heading font-bold text-gray-500 hover:text-primary-dark transition-colors"
+                                            className="inline-flex items-center px-1 pt-1 text-sm font-heading font-extrabold text-gray-700 hover:text-primary transition-colors"
                                         >
                                             Donor Portal
                                         </Link>
                                     ) : (
                                         <Link
                                             href="/receiver/dashboard"
-                                            className="inline-flex items-center px-1 pt-1 text-sm font-heading font-bold text-gray-500 hover:text-primary-dark transition-colors"
+                                            className="inline-flex items-center px-1 pt-1 text-sm font-heading font-extrabold text-gray-700 hover:text-primary transition-colors"
                                         >
                                             My Requests
                                         </Link>
@@ -73,7 +73,7 @@ const Navbar = () => {
                             )}
                             <Link
                                 href="/contact"
-                                className="inline-flex items-center px-1 pt-1 text-sm font-heading font-bold text-gray-500 hover:text-primary-dark transition-colors"
+                                className="inline-flex items-center px-1 pt-1 text-sm font-heading font-extrabold text-gray-700 hover:text-primary transition-colors"
                             >
                                 Contact
                             </Link>
@@ -85,7 +85,7 @@ const Navbar = () => {
                                 {user.role === 'donor' && (
                                     <Link
                                         href="/donor/posts/new"
-                                        className="hidden md:inline-flex items-center px-5 py-2.5 text-sm font-heading font-bold rounded-xl text-white bg-primary hover:bg-primary-hover transition-all shadow-lg shadow-primary-light"
+                                        className="hidden md:inline-flex items-center px-5 py-2.5 text-sm font-heading font-extrabold rounded-xl text-white bg-primary hover:bg-primary-hover transition-all shadow-lg shadow-primary/20"
                                     >
                                         <PlusCircle className="mr-2 h-4 w-4" />
                                         Donate Food
@@ -119,13 +119,13 @@ const Navbar = () => {
                             <div className="flex space-x-4">
                                 <Link
                                     href="/login"
-                                    className="text-gray-500 hover:text-primary px-3 py-2 rounded-xl text-sm font-heading font-bold transition-colors"
+                                    className="text-gray-700 hover:text-primary px-3 py-2 rounded-xl text-sm font-heading font-extrabold transition-colors"
                                 >
                                     Login
                                 </Link>
                                 <Link
                                     href="/register"
-                                    className="bg-primary text-white hover:bg-primary-hover px-6 py-2.5 rounded-xl text-sm font-heading font-bold transition-all shadow-lg shadow-primary-light"
+                                    className="bg-primary text-white hover:bg-primary-hover px-6 py-2.5 rounded-xl text-sm font-heading font-extrabold transition-all shadow-lg shadow-primary/20"
                                 >
                                     Join Now
                                 </Link>

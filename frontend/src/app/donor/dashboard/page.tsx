@@ -45,7 +45,7 @@ export default function DonorDashboard() {
   }, []);
 
   const statCards = [
-    { label: 'Active Donations', value: stats.activeDonations, icon: Package, color: 'bg-blue-500', light: 'bg-blue-50' },
+    { label: 'Active Donations', value: stats.activeDonations, icon: Package, color: 'bg-primary', light: 'bg-primary-light/10' },
     { label: 'Pending Requests', value: stats.pendingRequests, icon: MessageSquare, color: 'bg-amber-500', light: 'bg-amber-50' },
     { label: 'Completed', value: stats.completedDonations, icon: CheckCircle, color: 'bg-green-500', light: 'bg-green-50' },
   ];
@@ -58,7 +58,7 @@ export default function DonorDashboard() {
           <h1 className="text-3xl font-heading font-extrabold text-gray-900">
             Welcome back, <span className="text-primary">{user?.firstName || 'Donor'}</span>!
           </h1>
-          <p className="text-gray-500 mt-1">Thank you for sharing surplus food with your community.</p>
+          <p className="text-gray-700 mt-1 font-medium">Thank you for sharing surplus food with your community.</p>
         </div>
         <Link href="/donor/post-donation" className="btn-primary flex items-center justify-center gap-2 group">
           <PlusCircle size={18} />
@@ -75,7 +75,7 @@ export default function DonorDashboard() {
             </div>
             <div>
               <div className="text-2xl font-heading font-extrabold text-gray-900">{stat.value}</div>
-              <div className="text-xs font-heading font-bold text-gray-400 uppercase tracking-wider">{stat.label}</div>
+              <div className="text-xs font-heading font-extrabold text-gray-500 uppercase tracking-wider">{stat.label}</div>
             </div>
           </div>
         ))}
@@ -106,7 +106,7 @@ export default function DonorDashboard() {
                   </div>
                   <div className="flex-grow min-w-0">
                     <h4 className="font-heading font-bold text-gray-900 truncate">{donation.title || donation.name}</h4>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                    <div className="flex items-center gap-3 mt-1 text-xs text-gray-500 font-medium">
                       <span className="flex items-center gap-1"><Clock size={12} /> {new Date(donation.createdAt).toLocaleDateString()}</span>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-heading font-bold ${
                         donation.status === 'available' ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-500'
@@ -123,7 +123,7 @@ export default function DonorDashboard() {
             ) : (
               <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-gray-200">
                 <Package className="mx-auto text-gray-200 mb-4" size={48} />
-                <p className="text-gray-400 font-heading">No donations yet.</p>
+                <p className="text-gray-500 font-heading font-bold">No donations yet.</p>
                 <Link href="/donor/post-donation" className="text-primary font-heading font-bold mt-2 inline-block">
                   Create your first listing
                 </Link>
@@ -134,12 +134,12 @@ export default function DonorDashboard() {
 
         {/* Quick Tips / Actions */}
         <div className="space-y-6">
-          <div className="bg-primary-light rounded-[2rem] p-8 relative overflow-hidden group">
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-            <h3 className="text-xl font-heading font-extrabold text-primary mb-4 leading-tight">
+          <div className="bg-white rounded-[2rem] p-8 relative overflow-hidden group border border-gray-100 shadow-sm">
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+            <h3 className="text-xl font-heading font-extrabold text-gray-900 mb-4 leading-tight">
               Ready to help <br/> others?
             </h3>
-            <p className="text-primary/70 text-sm mb-6 leading-relaxed">
+            <p className="text-gray-500 text-sm mb-6 leading-relaxed">
               Posting a donation only takes a minute. Make sure to include clear photos!
             </p>
             <Link href="/donor/post-donation" className="btn-primary w-full text-center py-3 text-sm">
@@ -152,7 +152,7 @@ export default function DonorDashboard() {
               <TrendingUp className="text-primary" size={18} />
               Donor Tip
             </h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
+            <p className="text-sm text-gray-700 font-medium leading-relaxed">
               Donations with precise pickup locations and expiry dates get requested 40% faster.
             </p>
           </div>

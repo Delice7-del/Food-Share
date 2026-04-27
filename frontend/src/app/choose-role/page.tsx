@@ -63,16 +63,16 @@ export default function ChooseRole() {
           <button
             onClick={() => handleRoleSelection('receiver')}
             disabled={loading}
-            className="group relative bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-100 transition-all text-left flex flex-col h-full"
+            className="group relative bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/10 transition-all text-left flex flex-col h-full"
           >
-            <div className="bg-blue-50 p-5 rounded-3xl text-blue-600 w-fit mb-8 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            <div className="bg-gray-50 p-5 rounded-3xl text-gray-900 w-fit mb-8 group-hover:bg-primary group-hover:text-white transition-colors">
               <ShoppingBag size={40} />
             </div>
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-4">I'm looking for Food</h2>
             <p className="text-gray-500 font-body mb-10 flex-grow leading-relaxed">
               Find and request surplus food listings nearby. Direct connection with donors to help reduce food waste.
             </p>
-            <div className="flex items-center text-blue-600 font-heading font-bold text-lg">
+            <div className="flex items-center text-gray-900 font-heading font-bold text-lg group-hover:text-primary transition-colors">
               <span>Continue as Receiver</span>
               <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
             </div>

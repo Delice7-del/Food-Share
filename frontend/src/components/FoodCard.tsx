@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 interface FoodProps {
     food: {
         _id: string;
+        title?: string;
         name: string;
         quantity: string;
         description: string;
@@ -101,14 +102,14 @@ const FoodCard = ({ food, onClaim, onDelete }: FoodProps) => {
     };
 
     return (
-        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-primary-light hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
+        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
             {food.imageUrl ? (
                 <div className="h-48 overflow-hidden">
                     <img src={food.imageUrl} alt={food.title || food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
             ) : (
-                <div className="h-48 bg-primary-light flex items-center justify-center">
-                    <Utensils className="h-12 w-12 text-primary-light" />
+                <div className="h-48 bg-primary/5 flex items-center justify-center">
+                    <Utensils className="h-12 w-12 text-primary/20" />
                 </div>
             )}
             <div className="p-6 flex flex-col flex-grow">
@@ -122,20 +123,20 @@ const FoodCard = ({ food, onClaim, onDelete }: FoodProps) => {
                     </span>
                 </div>
 
-                <p className="mt-2 text-sm text-gray-600 line-clamp-2 leading-relaxed">{food.description}</p>
+                <p className="mt-2 text-sm text-gray-800 font-medium line-clamp-2 leading-relaxed">{food.description}</p>
 
                 <div className="mt-4 space-y-2 flex-grow">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-700 font-bold">
                         <Tag className="h-4 w-4 mr-2 text-primary" />
                         <span>Quantity: {getQuantityStr()}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 font-medium">
+                    <div className="flex items-center text-sm text-gray-700 font-bold">
                         <Calendar className="h-4 w-4 mr-2 text-primary" />
-                        <span className={isExpired ? 'text-red-600 font-bold' : 'text-gray-700 font-bold'}>
+                        <span className={isExpired ? 'text-red-600 font-bold' : 'text-gray-900 font-bold'}>
                             {getTimeLeft()}
                         </span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-700 font-bold">
                         <MapPin className="h-4 w-4 mr-2 text-primary" />
                         <span className="truncate">{getLocationStr()}</span>
                     </div>
@@ -152,19 +153,19 @@ const FoodCard = ({ food, onClaim, onDelete }: FoodProps) => {
                 <div className="mt-6 flex gap-2">
                     <Link
                         href={`/food/${food._id}`}
-                        className="flex-grow text-center text-primary border border-primary py-2 rounded-lg font-heading font-bold hover:bg-primary-light transition-colors"
+                        className="flex-grow text-center text-primary border border-primary py-2 rounded-lg font-heading font-extrabold hover:bg-primary/5 transition-colors"
                     >
                         View Details
                     </Link>
                     {user?.role === 'receiver' && food.status === 'available' && !isExpired && (
                         <button
                             onClick={() => router.push(`/food/${food._id}`)}
-                            className="flex-grow bg-primary text-white py-2 rounded-lg font-heading font-bold hover:bg-primary-hover transition-colors shadow-lg shadow-primary-light"
+                            className="flex-grow bg-primary text-white py-2 rounded-lg font-heading font-extrabold hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20"
                         >
                             Request
                         </button>
                     )}
-                    {user?.id === food.donor._id && (
+                    {user?.id === (typeof food.donor === 'object' ? food.donor._id : food.donor) && (
                         <button
                             onClick={handleDelete}
                             disabled={loading}

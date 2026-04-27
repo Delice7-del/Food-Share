@@ -60,9 +60,9 @@ export default function BrowseFoodPage() {
           category: categoryFilter === 'all' ? undefined : categoryFilter
         }
       });
-      // The new endpoint returns { success: true, data: { donations, pagination } }
-      const foodsArray = (res.data.data?.donations || []) as Donation[];
-      setFoods(foodsArray);
+      // Handle both unified { data: { donations } } and direct array responses
+      const foodData = res.data.data?.donations || (Array.isArray(res.data) ? res.data : []);
+      setFoods(foodData);
     } catch (err) {
       console.error('Failed to fetch foods:', err);
     } finally {
@@ -144,7 +144,7 @@ export default function BrowseFoodPage() {
           <h1 className="text-3xl font-heading font-extrabold text-gray-900 tracking-tight">
             Browse <span className="text-primary">Available Food</span>
           </h1>
-          <p className="text-gray-500 mt-1">Discover and request surplus food near you.</p>
+          <p className="text-gray-700 mt-1 font-medium">Discover and request surplus food near you.</p>
         </div>
       </div>
 
@@ -177,7 +177,7 @@ export default function BrowseFoodPage() {
             <option value="other">Other</option>
           </select>
         </div>
-        <div className="flex items-center justify-center bg-white rounded-2xl border border-gray-100 px-4 text-sm font-heading font-bold text-gray-500">
+        <div className="flex items-center justify-center bg-white rounded-2xl border border-gray-100 px-4 text-sm font-heading font-extrabold text-gray-700">
             {filteredFoods.length} Items Found
         </div>
       </div>
@@ -207,16 +207,16 @@ export default function BrowseFoodPage() {
                 <h3 className="text-lg font-heading font-bold text-gray-900 truncate mb-2">
                   {food.title || food.name}
                 </h3>
-                <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
+                <p className="text-sm text-gray-700 font-medium line-clamp-2 mb-4 leading-relaxed">
                   {food.description}
                 </p>
 
                 <div className="space-y-2 mb-6">
-                  <div className="flex items-center text-xs text-gray-500">
+                  <div className="flex items-center text-xs text-gray-700 font-bold">
                     <Tag size={14} className="mr-2 text-primary" />
                     <span>Quantity: {typeof food.quantity === 'object' ? `${food.quantity.amount} ${food.quantity.unit}` : food.quantity}</span>
                   </div>
-                  <div className="flex items-center text-xs text-gray-500">
+                  <div className="flex items-center text-xs text-gray-700 font-bold">
                     <MapPin size={14} className="mr-2 text-primary" />
                     <span className="truncate">
                       {food.location?.address?.city 
@@ -224,7 +224,7 @@ export default function BrowseFoodPage() {
                         : (typeof food.location?.address === 'string' ? food.location.address : 'Available')}
                     </span>
                   </div>
-                  <div className="flex items-center text-xs text-gray-500">
+                  <div className="flex items-center text-xs text-gray-700 font-bold">
                     <Clock size={14} className="mr-2 text-primary" />
                     <span>Expires: {new Date(food.expiryDate).toLocaleDateString()}</span>
                   </div>
@@ -243,15 +243,15 @@ export default function BrowseFoodPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
-          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Utensils className="h-10 w-10 text-gray-200" />
+        <div className="text-center py-24 bg-white rounded-[3rem] shadow-xl shadow-gray-200/50 border border-gray-100 max-w-2xl mx-auto animate-slide-up">
+          <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-8">
+            <Utensils className="h-12 w-12 text-primary" />
           </div>
-          <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">No food items found</h3>
-          <p className="text-gray-500 mb-8 max-w-sm mx-auto">
-            Try adjusting your search terms or filters to see more available donations.
+          <h3 className="text-3xl font-heading font-extrabold text-primary mb-3">No food items found</h3>
+          <p className="text-gray-500 max-w-sm mx-auto mb-10">
+            We couldn't find any donations matching your search. Try adjusting your search terms or filters to see more available donations.
           </p>
-          <button onClick={() => {setSearchTerm(''); setCategoryFilter('all');}} className="btn-primary">
+          <button onClick={() => {setSearchTerm(''); setCategoryFilter('all');}} className="btn-primary mx-auto px-10 w-fit">
             Clear All Filters
           </button>
         </div>

@@ -65,7 +65,7 @@ export default function MyRequestsPage() {
                 <span className={`px-3 py-1 rounded-full text-[10px] font-heading font-extrabold uppercase tracking-wider shrink-0 ${
                   request.status === 'Accepted' ? 'bg-green-100 text-green-700' :
                   request.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                  'bg-blue-100 text-blue-700'
+                  'bg-primary-light/20 text-primary'
                 }`}>
                   {request.status}
                 </span>

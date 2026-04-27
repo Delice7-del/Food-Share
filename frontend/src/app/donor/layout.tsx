@@ -80,7 +80,7 @@ export default function DonorLayout({
               </div>
               <div>
                 <span className="text-xl font-heading font-extrabold text-gray-900 tracking-tight">Food<span className="text-primary">Share</span></span>
-                <div className="text-[10px] font-heading font-extrabold uppercase tracking-[0.2em] text-gray-400 leading-none mt-1">Donor Portal</div>
+                <div className="text-[10px] font-heading font-extrabold uppercase tracking-[0.2em] text-gray-500 leading-none mt-1">Donor Portal</div>
               </div>
             </Link>
           </div>
@@ -94,7 +94,7 @@ export default function DonorLayout({
               <div className="text-sm font-heading font-bold text-gray-900 truncate">
                 {user.firstName} {user.lastName}
               </div>
-              <div className="text-[10px] text-gray-400 truncate">{user.email}</div>
+              <div className="text-[10px] text-gray-600 font-bold truncate">{user.email}</div>
             </div>
           </div>
 
@@ -108,12 +108,12 @@ export default function DonorLayout({
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-heading text-sm font-medium ${
                     active 
-                      ? 'bg-primary-light text-primary font-bold shadow-sm' 
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-primary text-white font-bold shadow-lg shadow-primary/20' 
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <item.icon size={20} className={active ? 'text-primary' : 'text-gray-400'} />
+                  <item.icon size={20} className={active ? 'text-white' : 'text-gray-600'} />
                   <span>{item.label}</span>
                   {active && <ChevronRight size={16} className="ml-auto" />}
                 </Link>

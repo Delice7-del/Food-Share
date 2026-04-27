@@ -11,6 +11,8 @@ interface User {
     email: string;
     role: 'donor' | 'receiver';
     organization?: string;
+    phone?: string;
+    address?: string;
 }
 
 interface AuthContextType {
