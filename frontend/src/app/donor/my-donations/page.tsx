@@ -19,7 +19,7 @@ import {
 import Link from 'next/link';
 
 export default function MyDonationsPage() {
-  const [donations, setDonations] = useState([]);
+  const [donations, setDonations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

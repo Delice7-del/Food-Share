@@ -151,17 +151,36 @@ app.use((err, req, res, next) => {
   });
 });
 
-console.log('🔌 Connecting to MongoDB...');
-const mongoUri = process.env.MONGODB_URI;
+// Connection events
+mongoose.connection.on('connected', () => {
+  console.log('✅ Mongoose connected to MongoDB');
+});
 
-if (!mongoUri) {
-  console.warn('⚠️ MONGODB_URI is not set. Falling back to localhost (this will likely fail in production).');
+mongoose.connection.on('error', (err) => {
+  console.error('❌ Mongoose connection error:', err.message);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️ Mongoose disconnected from MongoDB');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('🔄 Mongoose reconnected to MongoDB');
+});
+
+console.log('🔌 Connecting to MongoDB...');
+const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodshare';
+
+if (!process.env.MONGODB_URI) {
+  console.warn('⚠️ MONGODB_URI is not set. Falling back to 127.0.0.1 (IPv4).');
 }
 
-mongoose.connect(mongoUri || 'mongodb://localhost:27017/foodshare')
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
+console.log(`🔗 Using URI: ${mongoUri.replace(/:([^@]+)@/, ':****@')}`); // Mask password if present
 
+mongoose.connect(mongoUri, {
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+})
+  .then(() => {
     // Start server
     server.listen(PORT, () => {
       console.log(`🚀 FoodShare API server running on port ${PORT}`);
@@ -169,9 +188,8 @@ mongoose.connect(mongoUri || 'mongodb://localhost:27017/foodshare')
     });
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error details:', err.message);
+    console.error('❌ MongoDB initial connection error details:', err.message);
     if (err.reason) console.error('   Reason:', err.reason);
-    console.error('Full error:', err);
     
     // Ensure logs are flushed before exiting
     setTimeout(() => {

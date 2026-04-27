@@ -6,7 +6,7 @@ import { Bell, Check, Clock, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {

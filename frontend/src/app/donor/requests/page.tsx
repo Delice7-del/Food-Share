@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function DonorRequestsPage() {
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [activeChat, setActiveChat] = useState<{id: string, name: string} | null>(null);

@@ -16,10 +16,28 @@ import {
   AlertCircle
 } from 'lucide-react';
 
+interface Donation {
+  _id: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  category?: string;
+  dietaryTags?: string[];
+  imageUrl?: string;
+  quantity?: string | { amount: number; unit: string };
+  location?: {
+    address?: string | {
+      city?: string;
+      state?: string;
+    };
+  };
+  expiryDate: string;
+}
+
 export default function BrowseFoodPage() {
   const { user } = useAuth();
   const { socket } = useSocket();
-  const [foods, setFoods] = useState([]);
+  const [foods, setFoods] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -43,7 +61,8 @@ export default function BrowseFoodPage() {
         }
       });
       // The new endpoint returns { success: true, data: { donations, pagination } }
-      setFoods(res.data.data?.donations || []);
+      const foodsArray = (res.data.data?.donations || []) as Donation[];
+      setFoods(foodsArray);
     } catch (err) {
       console.error('Failed to fetch foods:', err);
     } finally {

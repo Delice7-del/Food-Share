@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 const ProfilePage = () => {
     const { user, checkAuth } = useAuth();
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState<string | null>(null);

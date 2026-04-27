@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 export default function MyRequestsPage() {
   const { user, loading: authLoading } = useAuth();
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeChat, setActiveChat] = useState<{id: string, name: string} | null>(null);
 

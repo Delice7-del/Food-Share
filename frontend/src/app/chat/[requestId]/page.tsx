@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 export default function ChatPage() {
   const { requestId } = useParams();
   const { user } = useAuth();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [request, setRequest] = useState<any>(null);

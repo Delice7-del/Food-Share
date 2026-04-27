@@ -22,7 +22,7 @@ export default function DonorDashboard() {
     pendingRequests: 0,
     completedDonations: 0
   });
-  const [recentDonations, setRecentDonations] = useState([]);
+  const [recentDonations, setRecentDonations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

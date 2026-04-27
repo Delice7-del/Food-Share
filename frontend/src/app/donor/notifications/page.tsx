@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function DonorNotificationsPage() {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchNotifications = async () => {

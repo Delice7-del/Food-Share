@@ -7,8 +7,26 @@ import FoodCard from '@/components/FoodCard';
 import api from '@/services/api';
 import { Search, Filter, Utensils } from 'lucide-react';
 
+interface Donation {
+  _id: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  category?: string;
+  dietaryTags?: string[];
+  imageUrl?: string;
+  quantity?: string | { amount: number; unit: string };
+  location?: {
+    address?: string | {
+      city?: string;
+      state?: string;
+    };
+  };
+  expiryDate: string;
+}
+
 export default function BrowseFood() {
-  const [foods, setFoods] = useState([]);
+  const [foods, setFoods] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
@@ -19,7 +37,8 @@ export default function BrowseFood() {
       const res = await api.get('/donations');
       // Update to handle unified API structure
       const foodData = res.data.data?.donations || res.data;
-      setFoods(Array.isArray(foodData) ? foodData : []);
+      const foodsArray = Array.isArray(foodData) ? foodData : [];
+      setFoods(foodsArray);
     } catch (err) {
       console.error('Failed to fetch foods', err);
     } finally {

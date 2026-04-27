@@ -17,7 +17,7 @@ import Script from 'next/script';
 
 export default function MapViewPage() {
   const { user } = useAuth();
-  const [donations, setDonations] = useState([]);
+  const [donations, setDonations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDonation, setSelectedDonation] = useState<any>(null);
   const mapRef = useRef<any>(null);

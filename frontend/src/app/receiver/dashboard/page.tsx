@@ -16,7 +16,7 @@ import Link from 'next/link';
 
 export default function ReceiverDashboard() {
   const { user, loading: authLoading } = useAuth();
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
