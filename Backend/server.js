@@ -5,6 +5,11 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+console.log('🏁 Starting FoodShare API...');
+console.log(`📦 Node Version: ${process.version}`);
+console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+console.log(`🔌 Port: ${process.env.PORT || 5002}`);
+
 const compression = require('compression');
 const morgan = require('morgan');
 const http = require('http');
@@ -49,6 +54,27 @@ const messageRoutes = require('./routes/messages');
 const donationRoutes = require('./routes/donations');
 const mapRoutes = require('./routes/map');
 
+// Root endpoint
+app.get('/', (req, res) => {
+  console.log('🏠 Root endpoint hit');
+  res.status(200).json({
+    status: 'Success',
+    message: 'Welcome to the FoodShare API',
+    docs: 'Use /api/<resource> to access endpoints',
+    health: '/health'
+  });
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  console.log('🏥 Health check endpoint hit');
+  res.status(200).json({
+    status: 'OK',
+    message: 'FoodShare API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use(helmet());
 app.use(compression());
 if (process.env.NODE_ENV === 'development') {
@@ -62,11 +88,16 @@ app.use(cors({
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
-    const allowedOrigins = ['https://yourdomain.com'];
-    if (allowedOrigins.includes(origin)) {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ].filter(Boolean);
+    
+    if (allowedOrigins.includes(origin) || !origin) {
       return callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true
 }));
@@ -86,14 +117,6 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files
 app.use('/uploads', express.static('uploads'));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    message: 'FoodShare API is running',
-    timestamp: new Date().toISOString()
-  });
-});
 
 // API routes
 app.use('/api/auth', authRoutes);
@@ -109,9 +132,11 @@ app.use('/api/map', mapRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
+  console.log(`🔍 404 Not Found: ${req.method} ${req.originalUrl || req.url}`);
   res.status(404).json({
     error: 'Route not found',
-    message: 'The requested API endpoint does not exist'
+    message: 'The requested API endpoint does not exist',
+    requestedUrl: req.originalUrl || req.url
   });
 });
 
@@ -126,11 +151,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/foodshare', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+console.log('🔌 Connecting to MongoDB...');
+const mongoUri = process.env.MONGODB_URI;
+
+if (!mongoUri) {
+  console.warn('⚠️ MONGODB_URI is not set. Falling back to localhost (this will likely fail in production).');
+}
+
+mongoose.connect(mongoUri || 'mongodb://localhost:27017/foodshare')
   .then(() => {
     console.log('✅ Connected to MongoDB');
 
@@ -141,8 +169,14 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/foodshare
     });
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB connection error details:', err.message);
+    if (err.reason) console.error('   Reason:', err.reason);
+    console.error('Full error:', err);
+    
+    // Ensure logs are flushed before exiting
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
   });
 
 // Graceful shutdown
