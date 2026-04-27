@@ -103,7 +103,7 @@ export default function DonorProfilePage() {
           <form onSubmit={handleSubmit} className="card p-8 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2 flex items-center gap-2 pb-2 border-b border-gray-50 mb-2">
-                <User className="text-primary" size={20} />
+                <UserIcon className="text-primary" size={20} />
                 <h3 className="text-lg font-heading font-bold text-gray-900">Personal Details</h3>
               </div>
 
