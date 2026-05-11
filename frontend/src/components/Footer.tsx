@@ -21,7 +21,7 @@ const Footer = () => {
                     </p>
                     <Link 
                         href="/register" 
-                        className="btn-primary px-8 py-4 text-lg shadow-lg hover:scale-105 active:scale-95 uppercase tracking-widest"
+                        className="btn-primary px-8 py-4 text-lg shadow-lg hover:scale-105 active:scale-95"
                     >
                         Access Portal
                     </Link>

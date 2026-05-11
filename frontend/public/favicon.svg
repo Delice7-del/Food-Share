@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background rounded square -->
+  <rect width="64" height="64" rx="14" ry="14" fill="#F5CBB2"/>
+
+  <!-- Heart shape -->
+  <path d="M32 48 C32 48 12 36 12 22 C12 15 17 10 24 10 C27.5 10 30.5 11.8 32 14 C33.5 11.8 36.5 10 40 10 C47 10 52 15 52 22 C52 36 32 48 32 48 Z" fill="#030712" opacity="0.15"/>
+
+  <!-- Fork icon centered -->
+  <g fill="#030712" transform="translate(24, 10)">
+    <!-- Fork left tine -->
+    <rect x="2" y="0" width="2.5" height="12" rx="1.2"/>
+    <!-- Fork middle tine -->
+    <rect x="6.75" y="0" width="2.5" height="12" rx="1.2"/>
+    <!-- Fork right tine -->
+    <rect x="11.5" y="0" width="2.5" height="12" rx="1.2"/>
+    <!-- Fork neck connector -->
+    <rect x="2" y="11" width="12" height="2.5" rx="1.2"/>
+    <!-- Fork handle -->
+    <rect x="6.75" y="13.5" width="2.5" height="26" rx="1.25"/>
+  </g>
+</svg>

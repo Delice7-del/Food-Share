@@ -17,6 +17,13 @@ const anticSlab = Antic_Slab({
 export const metadata: Metadata = {
   title: "FoodShare | Reduce Waste, Share Food",
   description: "A community platform to connect surplus food with those who need it.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 import { AuthProvider } from '@/context/AuthContext';

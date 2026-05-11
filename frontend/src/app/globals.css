@@ -52,7 +52,7 @@ button:hover,
 @layer components {
   /* Global Button and Link Styles */
   .btn-primary {
-    @apply bg-primary text-white px-6 py-3 rounded-2xl font-heading font-extrabold transition-all duration-300 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 uppercase tracking-wider;
+    @apply bg-primary text-white px-6 py-3 rounded-2xl font-heading font-extrabold transition-all duration-300 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 tracking-wider;
   }
 
   .btn-primary:hover {
